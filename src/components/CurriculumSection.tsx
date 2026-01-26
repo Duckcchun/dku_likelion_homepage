@@ -254,7 +254,7 @@ export function CurriculumSection() {
                     {/* Bottom Accent */}
                     <motion.div
                       className="h-1"
-                      style={{ originX: 0, backgroundColor: track.color }}
+                      style={{ backgroundColor: track.color, transformOrigin: "left" }}
                       initial={{ scaleX: 0 }}
                       animate={{ scaleX: isActive ? 1 : 0 }}
                       transition={{ duration: 0.3 }}
