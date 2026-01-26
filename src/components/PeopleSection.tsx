@@ -10,7 +10,9 @@ const members = [
     track: "Leader",
     message: "함께 성장하는 대표가 되겠습니다 !",
     image: "https://images.unsplash.com/photo-1753162660733-45bcad593b16?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzdGFydHVwJTIwdGVhbSUyMHBvcnRyYWl0fGVufDF8fHx8MTc2OTA2ODMzN3ww&ixlib=rb-4.1.0&q=80&w=1080",
-    email: "dongmin@likelion.org",
+    email: "qasw1733@gmail.com",
+    github: "https://github.com/Duckcchun",
+    linkedin: "https://www.linkedin.com/in/%EB%8F%99%EB%AF%BC-%EC%86%90-0a5674354",
   },
   {
     name: "여채린",
@@ -136,18 +138,48 @@ function MemberCard({ member, index }: { member: typeof members[0]; index: numbe
           <p className="text-gray-400 mb-6">"{member.message}"</p>
 
           <div className="flex gap-3">
-            <a
-              href={`mailto:${member.email}`}
-              className="p-2 bg-[#0F0F0F] border border-gray-700 rounded-lg hover:border-[#FF6000] transition-colors"
-            >
-              <Mail className="w-5 h-5 text-gray-400" />
-            </a>
-            <button className="p-2 bg-[#0F0F0F] border border-gray-700 rounded-lg hover:border-[#FF6000] transition-colors">
-              <Github className="w-5 h-5 text-gray-400" />
-            </button>
-            <button className="p-2 bg-[#0F0F0F] border border-gray-700 rounded-lg hover:border-[#FF6000] transition-colors">
-              <Linkedin className="w-5 h-5 text-gray-400" />
-            </button>
+            {member.email && (
+              <a
+                href={`mailto:${member.email}`}
+                className="p-2 bg-[#0F0F0F] border border-gray-700 rounded-lg hover:border-[#FF6000] transition-colors"
+              >
+                <Mail className="w-5 h-5 text-gray-400" />
+              </a>
+            )}
+            {member.github ? (
+              <a
+                href={member.github}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="p-2 bg-[#0F0F0F] border border-gray-700 rounded-lg hover:border-[#FF6000] transition-colors"
+              >
+                <Github className="w-5 h-5 text-gray-400" />
+              </a>
+            ) : (
+              <button
+                className="p-2 bg-[#0F0F0F] border border-gray-800 rounded-lg cursor-not-allowed"
+                aria-disabled="true"
+              >
+                <Github className="w-5 h-5 text-gray-600" />
+              </button>
+            )}
+            {member.linkedin ? (
+              <a
+                href={member.linkedin}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="p-2 bg-[#0F0F0F] border border-gray-700 rounded-lg hover:border-[#FF6000] transition-colors"
+              >
+                <Linkedin className="w-5 h-5 text-gray-400" />
+              </a>
+            ) : (
+              <button
+                className="p-2 bg-[#0F0F0F] border border-gray-800 rounded-lg cursor-not-allowed"
+                aria-disabled="true"
+              >
+                <Linkedin className="w-5 h-5 text-gray-600" />
+              </button>
+            )}
           </div>
 
           <div className="mt-6 text-xs text-gray-500">

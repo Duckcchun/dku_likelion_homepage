@@ -96,7 +96,7 @@ export function Footer() {
                 </svg>
               </motion.a>
               <motion.a
-                href="https://github.com/likelion-dankook"
+                href="https://github.com/Duckcchun"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-10 h-10 bg-[#1C1C1C] border border-gray-800 rounded-lg flex items-center justify-center hover:border-[#FF6000] transition-colors"
