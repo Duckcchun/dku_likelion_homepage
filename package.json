@@ -1,0 +1,27 @@
+{
+      "name": "멋쟁이사자처럼 단국대학교 홈페이지",
+      "version": "1.0.0",
+      "private": true,
+      "dependencies": {
+            "@emailjs/browser": "^4.4.1",
+            "@radix-ui/react-slot": "^1.1.2",
+            "class-variance-authority": "^0.7.1",
+            "clsx": "*",
+            "lucide-react": "^0.487.0",
+            "motion": "*",
+            "react": "^18.3.1",
+            "react-dom": "^18.3.1",
+            "tailwind-merge": "*"
+      },
+      "devDependencies": {
+            "@types/node": "^20.10.0",
+            "@types/react": "^19.2.9",
+            "@types/react-dom": "^19.2.3",
+            "@vitejs/plugin-react-swc": "^3.10.2",
+            "vite": "6.3.5"
+      },
+      "scripts": {
+            "dev": "vite",
+            "build": "vite build"
+      }
+}
