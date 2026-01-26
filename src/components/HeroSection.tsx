@@ -243,7 +243,7 @@ export function HeroSection() {
           >
             <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold mb-4">
               <span className="text-[#0047AB]">
-                DANKOOK UNIV.
+                DANKOOK UNIV. 
               </span>
             </h1>
             <div className="text-3xl md:text-5xl lg:text-6xl font-bold">
