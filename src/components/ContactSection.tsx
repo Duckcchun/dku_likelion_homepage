@@ -101,11 +101,10 @@ export function ContactSection() {
   ];
 
   const recruitSchedule = [
-    { phase: "서류 접수", period: "2026.02.01 - 02.14" },
-    { phase: "서류 합격 발표", period: "2026.02.17" },
-    { phase: "면접 진행", period: "2026.02.20 - 02.22" },
-    { phase: "최종 합격 발표", period: "2026.02.25" },
-    { phase: "OT 및 활동 시작", period: "2026.03.02" },
+    { phase: "서류 접수", period: "2026.02.01 - 03.10" },
+    { phase: "면접 진행", period: "2026.03.12 - 03.13" },
+    { phase: "최종 합격 발표", period: "2026.03.15" },
+    { phase: "OT 및 활동 시작", period: "2026.03.18" },
   ];
 
   return (
