@@ -40,7 +40,6 @@ export function AboutSection() {
     { icon: Award, label: "시작된지", value: 13, suffix: "년" },
     { icon: Users, label: "배출 인원", value: 14000 },
     { icon: Rocket, label: "론칭 서비스", value: 1800 },
-    { icon: Code2, label: "수상 실적", value: 28 },
   ];
 
   const values = [
