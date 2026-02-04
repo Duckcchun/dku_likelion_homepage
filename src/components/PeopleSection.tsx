@@ -28,7 +28,7 @@ const members = [
     track: "Back-end",
     message: "견고한 서버를 구축하는 것이 목표입니다",
     image: "https://images.unsplash.com/photo-1753162660733-45bcad593b16?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzdGFydHVwJTIwdGVhbSUyMHBvcnRyYWl0fGVufDF8fHx8MTc2OTA2ODMzN3ww&ixlib=rb-4.1.0&q=80&w=1080",
-    email: "joonho@likelion.org",
+    email: "did1406dud@dankook.ac.kr",
   },
   {
     name: "김민수",
@@ -36,7 +36,8 @@ const members = [
     track: "Back-end",
     message: "안정적인 API 설계가 저의 목표입니다",
     image: "https://images.unsplash.com/photo-1753162660733-45bcad593b16?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzdGFydHVwJTIwdGVhbSUyMHBvcnRyYWl0fGVufDF8fHx8MTc2OTA2ODMzN3ww&ixlib=rb-4.1.0&q=80&w=1080",
-    email: "minsu@likelion.org",
+    email: "ms32220624@dankook.ac.kr",
+    github: "https://github.com/Minwater-03",
   },
   {
     name: "김선민",
@@ -44,8 +45,7 @@ const members = [
     track: "Front-end",
     message: "React로 세상을 바꿔봅시다!",
     image: "https://images.unsplash.com/photo-1753162660733-45bcad593b16?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzdGFydHVwJTIwdGVhbSUyMHBvcnRyYWl0fGVufDF8fHx8MTc2OTA2ODMzN3ww&ixlib=rb-4.1.0&q=80&w=1080",
-    email: "sunmin@likelion.org",
-    github: "https://github.com",
+    email: "kimsunmin0616@dankook.ac.kr",
   },
   {
     name: "이효빈",
@@ -53,7 +53,8 @@ const members = [
     track: "PM",
     message: "프로젝트를 성공으로 이끌겠습니다",
     image: "https://images.unsplash.com/photo-1753162660733-45bcad593b16?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzdGFydHVwJTIwdGVhbSUyMHBvcnRyYWl0fGVufDF8fHx8MTc2OTA2ODMzN3ww&ixlib=rb-4.1.0&q=80&w=1080",
-    email: "hyobin@likelion.org",
+    email: "hbeen22@dankook.ac.kr",
+    github: "https://github.com/Novice-Dev-Robin/RealmArchive.git",
   },
 ];
 
