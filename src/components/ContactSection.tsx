@@ -7,7 +7,7 @@ import emailjs from "@emailjs/browser";
 const EMAILJS_PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
 const EMAILJS_SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID;
 const EMAILJS_TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
-const EMAILJS_TO_EMAIL = import.meta.env.VITE_EMAILJS_TO_EMAIL || "likelion@dankook.ac.kr";
+const EMAILJS_TO_EMAIL = import.meta.env.VITE_EMAILJS_TO_EMAIL || "dku_uni@likelion.org";
 
 export function ContactSection() {
   const ref = useRef(null);
@@ -205,8 +205,8 @@ export function ContactSection() {
                     animate={{ opacity: 1, y: 0 }}
                     className={`flex items-center gap-2 p-4 rounded-lg ${
                       submitStatus === "success"
-                        ? "bg-green-500/10 border border-green-500/30 text-green-400"
-                        : "bg-red-500/10 border border-red-500/30 text-red-400"
+                        ? "bg-green-500/20 border border-green-500/50 text-white"
+                        : "bg-red-500/20 border border-red-500/50 text-white"
                     }`}
                   >
                     {submitStatus === "success" ? (
@@ -214,7 +214,7 @@ export function ContactSection() {
                     ) : (
                       <AlertCircle className="w-5 h-5 flex-shrink-0" />
                     )}
-                    <span className="text-sm">{submitMessage}</span>
+                    <span className="text-sm font-medium">{submitMessage}</span>
                   </motion.div>
                 )}
 

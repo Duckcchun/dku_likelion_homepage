@@ -2,6 +2,12 @@ import { motion, useInView } from "motion/react";
 import { useRef, useState } from "react";
 import { Mail, Linkedin, Github } from "lucide-react";
 import { OptimizedImage } from "./utils-components/OptimizedImage";
+import member1 from "../assets/member-1.png";
+import member2 from "../assets/member-2.png";
+import member3 from "../assets/member-3.png";
+import member4 from "../assets/member-4.png";
+import member5 from "../assets/member-5.png";
+import member6 from "../assets/member-6.png";
 
 const members = [
   {
@@ -9,7 +15,8 @@ const members = [
     role: "14기 대표",
     track: "Leader",
     message: "함께 성장하는 대표가 되겠습니다 !",
-    image: "https://images.unsplash.com/photo-1753162660733-45bcad593b16?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzdGFydHVwJTIwdGVhbSUyMHBvcnRyYWl0fGVufDF8fHx8MTc2OTA2ODMzN3ww&ixlib=rb-4.1.0&q=80&w=1080",
+    image: member1,
+    emoji: "👑",
     email: "qasw1733@gmail.com",
     github: "https://github.com/Duckcchun",
     linkedin: "https://www.linkedin.com/in/%EB%8F%99%EB%AF%BC-%EC%86%90-0a5674354",
@@ -18,24 +25,29 @@ const members = [
     name: "여채린",
     role: "14기 부대표",
     track: "Vice Leader",
-    message: "빛나는 아기사자를 위해 최선을 다하겠습니다",
-    image: "https://images.unsplash.com/photo-1753162660733-45bcad593b16?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzdGFydHVwJTIwdGVhbSUyMHBvcnRyYWl0fGVufDF8fHx8MTc2OTA2ODMzN3ww&ixlib=rb-4.1.0&q=80&w=1080",
-    email: "chaerin@likelion.org",
+    message: "함께 배우고 성장하는 멋사를 만들어가겠습니다",
+    image: member2,
+    emoji: "🌟",
+    email: "ycl0514@dankook.ac.kr",
+    github: "https://github.com/chae-ring",
   },
   {
     name: "양준호",
     role: "백엔드",
     track: "Back-end",
-    message: "견고한 서버를 구축하는 것이 목표입니다",
-    image: "https://images.unsplash.com/photo-1753162660733-45bcad593b16?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzdGFydHVwJTIwdGVhbSUyMHBvcnRyYWl0fGVufDF8fHx8MTc2OTA2ODMzN3ww&ixlib=rb-4.1.0&q=80&w=1080",
+    message: "올해도 버텨보겠습니다 같이 성장해요!",
+    image: member3,
+    emoji: "💻",
     email: "did1406dud@dankook.ac.kr",
+    github: "https://github.com/Novice-Dev-Robin",
   },
   {
     name: "김민수",
     role: "백엔드",
     track: "Back-end",
-    message: "안정적인 API 설계가 저의 목표입니다",
-    image: "https://images.unsplash.com/photo-1753162660733-45bcad593b16?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzdGFydHVwJTIwdGVhbSUyMHBvcnRyYWl0fGVufDF8fHx8MTc2OTA2ODMzN3ww&ixlib=rb-4.1.0&q=80&w=1080",
+    message: "함께 성장해나가며 모두에게 얻어갈 수 있는 한 해가 되어봅시다!",
+    image: member4,
+    emoji: "🚀",
     email: "ms32220624@dankook.ac.kr",
     github: "https://github.com/Minwater-03",
   },
@@ -43,18 +55,20 @@ const members = [
     name: "김선민",
     role: "프론트엔드",
     track: "Front-end",
-    message: "React로 세상을 바꿔봅시다!",
-    image: "https://images.unsplash.com/photo-1753162660733-45bcad593b16?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzdGFydHVwJTIwdGVhbSUyMHBvcnRyYWl0fGVufDF8fHx8MTc2OTA2ODMzN3ww&ixlib=rb-4.1.0&q=80&w=1080",
+    message: "꾸준한 노력으로 성장하는 개발자입니다",
+    image: member5,
+    emoji: "🎨",
     email: "kimsunmin0616@dankook.ac.kr",
   },
   {
     name: "이효빈",
     role: "기획",
     track: "PM",
-    message: "프로젝트를 성공으로 이끌겠습니다",
-    image: "https://images.unsplash.com/photo-1753162660733-45bcad593b16?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzdGFydHVwJTIwdGVhbSUyMHBvcnRyYWl0fGVufDF8fHx8MTc2OTA2ODMzN3ww&ixlib=rb-4.1.0&q=80&w=1080",
+    message: "오늘도 심어보는 사과 나무 한 그루 잘 부탁드립니다~",
+    image: member6,
+    emoji: "🍎",
     email: "hbeen22@dankook.ac.kr",
-    github: "https://github.com/Novice-Dev-Robin/RealmArchive.git",
+    github: "https://github.com/hyoddi",
   },
 ];
 
@@ -92,12 +106,9 @@ function MemberCard({ member, index }: { member: typeof members[0]; index: numbe
           style={{ backfaceVisibility: "hidden" }}
         >
           <div className="relative w-full h-full group">
-            <OptimizedImage
+            <img
               src={member.image}
               alt={`${member.name} - ${member.role}`}
-              width={400}
-              height={400}
-              quality={80}
               className="w-full h-full object-cover"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent opacity-80" />
@@ -133,7 +144,7 @@ function MemberCard({ member, index }: { member: typeof members[0]; index: numbe
             className="w-16 h-16 rounded-full flex items-center justify-center mb-6"
             style={{ backgroundColor: `${trackColors[member.track]}20` }}
           >
-            <span className="text-3xl">✨</span>
+            <span className="text-3xl">{member.emoji}</span>
           </div>
 
           <h3 className="text-2xl font-bold text-white mb-2">{member.name}</h3>
