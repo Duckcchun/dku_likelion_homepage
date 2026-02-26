@@ -2,6 +2,7 @@ import { motion, useScroll, useTransform, useMotionValue } from "motion/react";
 import { useRef, useEffect } from "react";
 import { ChevronDown } from "lucide-react";
 import likelionUnivLogo from "../assets/0e22b8d85e32254db31b5fd548862b4df3d4b0a1.png";
+import startupLogo from "../assets/단대_창업지원단_로고-removebg-preview.png";
 
 export function HeroSection() {
   const ref = useRef<HTMLElement>(null);
@@ -213,17 +214,22 @@ export function HeroSection() {
         className="relative z-10 text-center px-4 max-w-5xl mx-auto"
         style={{ opacity }}
       >
-        {/* Likelion Univ Logo - Bottom Left */}
+        {/* Likelion Univ + Startup Support Logos */}
         <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.8, delay: 1.2 }}
-          className="fixed bottom-8 left-8 z-20"
+          className="fixed bottom-8 left-8 z-20 flex items-center gap-3"
         >
-          <img 
-            src={likelionUnivLogo} 
-            alt="멋사대학" 
+          <img
+            src={likelionUnivLogo}
+            alt="멋사대학"
             className="w-32 md:w-40 opacity-90"
+          />
+          <img
+            src={startupLogo}
+            alt="창업지원단"
+            className="w-20 md:w-24 opacity-90"
           />
         </motion.div>
 
