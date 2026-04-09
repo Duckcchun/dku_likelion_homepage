@@ -1,7 +1,7 @@
 import { motion, useScroll, useMotionValueEvent } from "motion/react";
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
-import dankookLogo from "../assets/d4779426a70a161f36b0a3fe4df0ccddfda7687b.png";
+import dankookLogo from "../assets/dankook-logo.png";
 
 export function Navigation() {
   const [isScrolled, setIsScrolled] = useState(false);
