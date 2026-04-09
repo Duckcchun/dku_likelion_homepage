@@ -8,6 +8,8 @@ import member3 from "../assets/member-3.png";
 import member4 from "../assets/member-4.png";
 import member5 from "../assets/member-5.png";
 import member6 from "../assets/member-6.png";
+import member7 from "../assets/member-7.png";
+import member8 from "../assets/member-8.png";
 
 const members = [
   {
@@ -62,13 +64,29 @@ const members = [
   },
   {
     name: "이효빈",
-    role: "기획",
-    track: "PM",
+    role: "프론트엔드",
+    track: "Front-end",
     message: "오늘도 심어보는 사과 나무 한 그루 잘 부탁드립니다~",
     image: member6,
     emoji: "🍎",
     email: "hbeen22@dankook.ac.kr",
     github: "https://github.com/hyoddi",
+  },
+  {
+    name: "이동근",
+    role: "기획",
+    track: "PM",
+    message: "함께 소통하고 완성도 높은 서비스를 만들겠습니다!",
+    image: member7,
+    emoji: "📝",
+  },
+  {
+    name: "김지호",
+    role: "디자인",
+    track: "Design",
+    message: "더 나은 사용자 경험을 만들기 위해 디테일을 놓치지 않겠습니다!",
+    image: member8,
+    emoji: "🎨",
   },
 ];
 
@@ -205,6 +223,10 @@ function MemberCard({ member, index }: { member: typeof members[0]; index: numbe
 }
 
 export function PeopleSection() {
+  const showRecruitClosedAlert = () => {
+    window.alert("모집 기간이 아닙니다.");
+  };
+
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, amount: 0.2 });
 
@@ -258,6 +280,10 @@ export function PeopleSection() {
             </p>
             <a
               href="#recruit"
+              onClick={(e) => {
+                e.preventDefault();
+                showRecruitClosedAlert();
+              }}
               className="inline-block px-8 py-3 bg-[#FF6000] text-white rounded-lg hover:bg-[#ff7a26] transition-colors"
             >
               지원하기

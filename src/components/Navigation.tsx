@@ -4,6 +4,10 @@ import { Menu, X } from "lucide-react";
 import dankookLogo from "../assets/dankook-logo.png";
 
 export function Navigation() {
+  const showRecruitClosedAlert = () => {
+    window.alert("모집 기간이 아닙니다.");
+  };
+
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { scrollY } = useScroll();
@@ -72,6 +76,10 @@ export function Navigation() {
               ))}
               <motion.a
                 href="#recruit"
+                onClick={(e) => {
+                  e.preventDefault();
+                  showRecruitClosedAlert();
+                }}
                 className="px-6 py-2 bg-[#FF6000] text-white rounded-lg hover:bg-[#ff7a26] transition-colors"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
@@ -132,7 +140,11 @@ export function Navigation() {
                   : { opacity: 0, x: -20 }
               }
               transition={{ delay: navItems.length * 0.05 }}
-              onClick={() => setIsMobileMenuOpen(false)}
+              onClick={(e) => {
+                e.preventDefault();
+                setIsMobileMenuOpen(false);
+                showRecruitClosedAlert();
+              }}
             >
               지원하기
             </motion.a>

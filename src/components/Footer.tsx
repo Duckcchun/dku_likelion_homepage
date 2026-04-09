@@ -127,10 +127,6 @@ export function Footer() {
             <p className="text-gray-400 text-sm">
               © 2026 멋쟁이사자처럼 단국대학교. All rights reserved.
             </p>
-            <p className="text-gray-400 text-sm flex items-center gap-2">
-              Made with <Heart className="w-4 h-4 text-[#FF6000] fill-[#FF6000]" /> by
-              LIKELION DANKOOK
-            </p>
           </div>
         </motion.div>
       </div>

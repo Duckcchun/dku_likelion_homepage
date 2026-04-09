@@ -10,6 +10,10 @@ const EMAILJS_TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
 const EMAILJS_TO_EMAIL = import.meta.env.VITE_EMAILJS_TO_EMAIL || "dku_uni@likelion.org";
 
 export function ContactSection() {
+  const showRecruitClosedAlert = () => {
+    window.alert("모집 기간이 아닙니다.");
+  };
+
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, amount: 0.3 });
   const [formData, setFormData] = useState({
@@ -83,8 +87,8 @@ export function ContactSection() {
     {
       icon: Mail,
       label: "이메일",
-      value: "likelion@dankook.ac.kr",
-      link: "mailto:likelion@dankook.ac.kr",
+      value: "dku_uni@likelion.org",
+      link: "mailto:dku_uni@likelion.org",
     },
     {
       icon: Instagram,
@@ -313,6 +317,10 @@ export function ContactSection() {
                   href="https://dku-lion.vercel.app/"
                   target="_blank"
                   rel="noopener noreferrer"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    showRecruitClosedAlert();
+                  }}
                   className="block w-full px-6 py-3 bg-[#FF6000] text-white text-center rounded-lg hover:bg-[#ff7a26] transition-colors"
                 >
                   지원서 작성하기 →
