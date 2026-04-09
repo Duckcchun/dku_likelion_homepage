@@ -40,8 +40,8 @@ export function Navigation() {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
-              <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center overflow-hidden p-0 shadow-md">
-                <img src={dankookLogo} alt="단국대학교" className="w-full h-full object-contain scale-110" />
+              <div className="w-12 h-12 rounded-xl flex items-center justify-center overflow-hidden">
+                <img src={dankookLogo} alt="단국대학교" className="w-full h-full object-contain" />
               </div>
               <div className="hidden sm:block leading-tight">
                 <div className="text-[#0047AB] text-sm font-bold">DANKOOK UNIV</div>

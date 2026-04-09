@@ -28,19 +28,17 @@ export function LoadingScreen({ onComplete }: { onComplete: () => void }) {
       className="fixed inset-0 z-50 bg-[#1C1C1C] flex items-center justify-center"
     >
       <div className="text-center">
-        {/* Dankook University Logo with White Box */}
         <motion.div
           initial={{ scale: 0.5, opacity: 0, rotate: -180 }}
           animate={{ scale: 1, opacity: 1, rotate: 0 }}
           transition={{ duration: 0.8, type: "spring" }}
           className="mb-8"
         >
-          {/* 흰색 박스 */}
-          <div className="w-32 h-32 mx-auto mb-4 bg-white rounded-2xl flex items-center justify-center shadow-2xl">
+          <div className="w-32 h-32 mx-auto mb-4 flex items-center justify-center drop-shadow-2xl">
             <img
               src={dankookLogo}
               alt="단국대학교 로고"
-              className="w-24 h-24 object-contain"
+              className="w-full h-full object-contain"
             />
           </div>
 
