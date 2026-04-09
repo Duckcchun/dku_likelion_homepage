@@ -2,8 +2,16 @@ import { motion, useScroll, useTransform, useMotionValue } from "motion/react";
 import { useRef, useEffect } from "react";
 import { ChevronDown } from "lucide-react";
 import Spline from "@splinetool/react-spline";
-import likelionUnivLogo from "../assets/0e22b8d85e32254db31b5fd548862b4df3d4b0a1.png";
-import startupLogo from "../assets/단대_창업지원단_로고-removebg-preview.png";
+
+const likelionUnivLogo = new URL(
+  "../assets/0e22b8d85e32254db31b5fd548862b4df3d4b0a1.png",
+  import.meta.url,
+).href;
+
+const startupLogo = new URL(
+  "../assets/단대_창업지원단_로고-removebg-preview.png",
+  import.meta.url,
+).href;
 
 export function HeroSection() {
   const ref = useRef<HTMLElement>(null);
@@ -33,10 +41,10 @@ export function HeroSection() {
       className="relative min-h-screen flex items-center justify-center bg-[#0A0A0A] pt-24"
     >
       <div className="absolute inset-0 z-10 overflow-hidden">
-        <div className="absolute -top-[8%] left-0 w-full h-[116%] scale-105">
+        <div className="absolute -top-[8%] left-0 w-full h-[116%] scale-105 pointer-events-none select-none">
           <Spline
             scene="https://prod.spline.design/ZIRHX1UuO6MzVmaV/scene.splinecode"
-            style={{ width: "100%", height: "100%" }}
+            style={{ width: "100%", height: "100%", pointerEvents: "none" }}
           />
         </div>
       </div>
