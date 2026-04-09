@@ -51,7 +51,7 @@ export function HeroSection() {
 
       <div className="absolute inset-0 bg-black/20 z-10 pointer-events-none" />
 
-      <div className="absolute bottom-0 left-0 w-full h-32 bg-black/60 z-20" />
+      <div className="absolute bottom-0 left-0 w-full h-24 bg-gradient-to-t from-[#0A0A0A] via-[#0A0A0A]/70 to-transparent z-20 pointer-events-none" />
 
       <motion.div
         initial={{ opacity: 0, x: -20 }}
