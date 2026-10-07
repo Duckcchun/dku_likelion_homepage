@@ -53,18 +53,7 @@ body {
   word-break: keep-all;
 }
 
-/* 히어로: 흩어진 카드가 제자리에서 천천히 떠 있는 움직임. --float가 0이 되면 멈춥니다. */
-@keyframes hero-float {
-  from {
-    translate: 0 calc(var(--float, 0) * -7px);
-  }
-  to {
-    translate: 0 calc(var(--float, 0) * 7px);
-  }
-}
-.hero-float {
-  animation: hero-float 5.5s ease-in-out infinite alternate;
-}
+/* 히어로: 스크롤 안내 화살표가 위아래로 살짝 움직입니다. */
 @keyframes hero-hint {
   from {
     translate: 0 -3px;
@@ -77,7 +66,6 @@ body {
   animation: hero-hint 1.4s ease-in-out infinite alternate;
 }
 @media (prefers-reduced-motion: reduce) {
-  .hero-float,
   .hero-hint {
     animation: none;
   }

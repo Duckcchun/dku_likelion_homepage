@@ -125,14 +125,14 @@
         "purpose": "스크롤 등장. 항목 간 0.05–0.06초 간격."
       },
       {
-        "name": "hero-align",
-        "value": "scroll-linked, 190svh / sticky 100svh, easeInOutCubic",
-        "purpose": "흩어진 프로덕트 화면이 스크롤에 맞춰 한 줄로 정렬된다."
+        "name": "hero-particles",
+        "value": "three.js instanced meshes + ShaderMaterial: 10,500 flat triangle frames, 80 thick frames/tetrahedra (mobile 1/3), 3 draw calls, additive blending, depth fog, facing-based shading",
+        "purpose": "입자가 곰 머리를 이루다 무너져 내리고, 갈기 두른 사자로 다시 모인다. 마우스를 쳐다본다."
       },
       {
-        "name": "hero-float",
-        "value": "5.5s ease-in-out alternate, ±7px",
-        "purpose": "흩어진 카드가 제자리에서 떠 있는 움직임. 정렬되면 멈춘다."
+        "name": "hero-scatter",
+        "value": "scroll-linked, 200svh / sticky 100svh",
+        "purpose": "스크롤하면 파티클이 흩어지고 프로덕트 줄이 떠오른다."
       }
     ],
     "breakpoints": [
@@ -268,7 +268,7 @@
     "donts": [
       "Don't 보라·파랑 그라데이션, 글래스 카드, 네온 글로우를 쓰지 않는다. AI 템플릿처럼 보인다.",
       "Don't 표와 공지글 목록으로 화면을 채우지 않는다. 학교 공지 게시판처럼 보인다.",
-      "Don't 그림자나 색 번짐을 히어로 밖에 추가하지 않는다. 히어로의 빛도 오렌지와 블루 둘뿐이다.",
+      "Don't 그림자나 색 번짐을 히어로 밖에 추가하지 않는다. 히어로의 빛은 파티클과 그 뒤의 블루/오렌지 번짐뿐이다.",
       "Don't `bear-blue` 원색을 검정 바탕의 글자·아이콘에 쓰지 않는다.",
       "Don't 블루 면을 한 화면에 둘 이상 두지 않는다.",
       "Don't 세 번째 브랜드 색을 들이지 않는다.",

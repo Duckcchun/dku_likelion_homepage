@@ -3,6 +3,7 @@ import { motion, useReducedMotion, useScroll, useTransform, type MotionValue } f
 import { ArrowDown } from "lucide-react";
 import { allProducts, productGroups, type Product } from "../data/products";
 import { EASE } from "./layout";
+import { ParticleEmblem } from "./ParticleEmblem";
 import { useIsMobile } from "./ui/use-mobile";
 
 const likelionUnivLogo = new URL("../assets/logo-likelion-univ.webp", import.meta.url).href;
@@ -10,50 +11,21 @@ const startupLogo = new URL("../assets/logo-dku-startup.webp", import.meta.url).
 
 const year = productGroups[0]?.year;
 
-/**
- * 흩어진 상태의 카드 자리. 화면 중앙 기준 x(vw)·y(vh), 기울기(deg), 크기 배율, 밝기.
- * 가운데 글자를 가리지 않도록 가장자리에만 둡니다. 프로덕트가 더 많아지면 앞에서부터 다시 씁니다.
- */
-type Spot = { x: number; y: number; rotate: number; scale: number; opacity: number };
-
-const SCATTER_DESKTOP: Spot[] = [
-  { x: -38, y: -29, rotate: -8, scale: 1.5, opacity: 0.78 },
-  { x: -20, y: -36, rotate: 5, scale: 0.9, opacity: 0.63 },
-  { x: 21, y: -36, rotate: -4, scale: 1.1, opacity: 0.68 },
-  { x: 39, y: -26, rotate: 9, scale: 1.6, opacity: 0.78 },
-  { x: -42, y: 3, rotate: 6, scale: 1.15, opacity: 0.68 },
-  { x: 42, y: 7, rotate: -7, scale: 1.3, opacity: 0.68 },
-  { x: -33, y: 31, rotate: -5, scale: 1.7, opacity: 0.83 },
-  { x: 3, y: 39, rotate: 3, scale: 1.1, opacity: 0.68 },
-  { x: 33, y: 33, rotate: 7, scale: 1.5, opacity: 0.78 },
-];
-
-const SCATTER_MOBILE: Spot[] = [
-  { x: -36, y: -39, rotate: -8, scale: 0.9, opacity: 0.73 },
-  { x: 4, y: -44, rotate: 4, scale: 0.65, opacity: 0.58 },
-  { x: 40, y: -38, rotate: 7, scale: 0.8, opacity: 0.68 },
-  { x: -50, y: 16, rotate: 6, scale: 0.6, opacity: 0.53 },
-  { x: 52, y: -25, rotate: -6, scale: 0.55, opacity: 0.53 },
-  { x: -31, y: 37, rotate: -5, scale: 0.9, opacity: 0.73 },
-  { x: 7, y: 43, rotate: 3, scale: 0.7, opacity: 0.58 },
-  { x: 39, y: 35, rotate: 8, scale: 0.95, opacity: 0.68 },
-  { x: 52, y: 18, rotate: -4, scale: 0.55, opacity: 0.53 },
-];
-
-/** 정렬된 상태: 화면 아래쪽 한 줄. 데스크톱은 전부 보이고, 모바일은 양옆으로 이어집니다. */
+/** 프로덕트 줄: 화면 아래쪽 한 줄. 데스크톱은 전부 보이고, 모바일은 양옆으로 이어집니다. (x 간격 vw, 높이 vh) */
 const ROW = {
   desktop: { step: 11, y: 36 },
   mobile: { step: 32, y: 37 },
 };
 
-/** 정렬된 뒤 카드 밝기. 글자보다 앞서지 않도록 살짝 낮춥니다. */
+/** 줄에 놓인 카드 밝기. 글자보다 앞서지 않도록 살짝 낮춥니다. */
 const ROW_OPACITY = 0.7;
 
 function easeInOut(t: number) {
   return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
 }
 
-function FloatingCard({
+/** 파티클이 흩어진 자리에 떠오르는 프로덕트 화면 한 장 */
+function RowCard({
   product,
   index,
   total,
@@ -66,102 +38,64 @@ function FloatingCard({
   progress: MotionValue<number>;
   mobile: boolean;
 }) {
-  const spots = mobile ? SCATTER_MOBILE : SCATTER_DESKTOP;
-  const from = spots[index % spots.length];
   const row = mobile ? ROW.mobile : ROW.desktop;
   const fromCenter = index - (total - 1) / 2;
-  const toX = fromCenter * row.step;
 
-  // 바깥쪽 카드가 조금 늦게 출발해 줄이 가운데부터 채워집니다.
-  const range = [0.03 * Math.abs(fromCenter), 0.82];
+  // 가운데 카드부터 바깥쪽으로 차례로 나타납니다.
+  const start = 0.42 + 0.025 * Math.abs(fromCenter);
+  const range = [start, start + 0.26];
 
-  const x = useTransform(progress, range, [`${from.x}vw`, `${toX}vw`], { ease: easeInOut });
-  const y = useTransform(progress, range, [`${from.y}vh`, `${row.y}vh`], { ease: easeInOut });
-  const rotate = useTransform(progress, range, [from.rotate, 0], { ease: easeInOut });
-  const scale = useTransform(progress, range, [from.scale, 1], { ease: easeInOut });
-  const opacity = useTransform(progress, range, [from.opacity, ROW_OPACITY]);
-  const float = useTransform(progress, [0, 0.7], [1, 0]);
+  const opacity = useTransform(progress, range, [0, ROW_OPACITY]);
+  const lift = useTransform(progress, range, [36, 0], { ease: easeInOut });
+  const y = useTransform(lift, (v) => `calc(${row.y}vh + ${v}px)`);
 
   return (
     <motion.li
       className="absolute left-1/2 top-1/2 -ml-[15vw] -mt-[9.375vw] w-[30vw] md:-ml-[5.1vw] md:-mt-[3.1875vw] md:w-[10.2vw]"
-      style={{ x, y, rotate, scale, opacity, zIndex: Math.round(from.scale * 10) }}
+      style={{ x: `${fromCenter * row.step}vw`, y, opacity }}
     >
-      <motion.div
-        className="hero-float aspect-[16/10] overflow-hidden rounded-md bg-[#161616] ring-1 ring-white/10 md:rounded-lg"
-        style={{ "--float": float, animationDelay: `${-index * 0.9}s` } as Record<string, unknown>}
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.9, delay: 0.3 + index * 0.06, ease: EASE }}
-      >
+      <div className="aspect-[16/10] overflow-hidden rounded-md bg-[#161616] ring-1 ring-white/10 md:rounded-lg">
         <img
           src={product.image}
           alt={`${product.name} 화면`}
           className="h-full w-full object-cover"
           style={{ objectPosition: product.imagePosition ?? "center" }}
         />
-      </motion.div>
+      </div>
     </motion.li>
   );
 }
 
 export function HeroSection() {
   const ref = useRef<HTMLElement>(null);
-  const reduce = useReducedMotion();
+  const reduce = useReducedMotion() ?? false;
   const mobile = useIsMobile();
 
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end end"] });
-  // 움직임을 줄이는 설정에서는 처음부터 정렬된 모습으로 고정합니다.
+  // 움직임을 줄이는 설정에서는 스크롤 연출 없이 엠블럼과 프로덕트 줄을 함께 보여 줍니다.
   const progress = useTransform(scrollYProgress, (v) => (reduce ? 1 : v));
+  // 파티클 엠블럼이 흩어지는 정도 (0 = 모여 있음, 1 = 사라짐)
+  const scatter = useTransform(scrollYProgress, (v) => (reduce ? 0 : Math.min(1, Math.max(0, (v - 0.02) / 0.5))));
 
-  const captionOpacity = useTransform(progress, [0.7, 0.9], [0, 1]);
+  const captionOpacity = useTransform(progress, [0.75, 0.92], [0, 1]);
   const captionEvents = useTransform(captionOpacity, (v) => (v > 0.5 ? "auto" : "none"));
   const hintOpacity = useTransform(progress, [0, 0.12], [1, 0]);
 
-  // 배경: 설계도 같은 격자는 정렬되면서 사라지고, 사자(오렌지)와 곰(블루)의 빛은 줄 아래로 모입니다.
-  const gridOpacity = useTransform(progress, [0, 0.6], [1, 0]);
-  const lionX = useTransform(progress, [0, 0.82], ["-32vw", "-14vw"], { ease: easeInOut });
-  const lionY = useTransform(progress, [0, 0.82], ["-34vh", "40vh"], { ease: easeInOut });
-  const bearX = useTransform(progress, [0, 0.82], ["34vw", "14vw"], { ease: easeInOut });
-  const bearY = useTransform(progress, [0, 0.82], ["24vh", "40vh"], { ease: easeInOut });
-
   return (
-    <section id="top" ref={ref} className={`relative bg-[#0B0B0B] ${reduce ? "" : "h-[190svh]"}`}>
+    <section id="top" ref={ref} className={`relative bg-black ${reduce ? "" : "h-[200svh]"}`}>
       <div className="sticky top-0 flex h-[100svh] flex-col overflow-hidden">
-        <div className="pointer-events-none absolute inset-0" aria-hidden>
-          <motion.div
-            className="absolute inset-0"
-            style={{
-              opacity: gridOpacity,
-              backgroundImage:
-                "linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px)",
-              backgroundSize: "72px 72px",
-              maskImage: "radial-gradient(ellipse 75% 70% at 50% 45%, black, transparent)",
-              WebkitMaskImage: "radial-gradient(ellipse 75% 70% at 50% 45%, black, transparent)",
-            }}
-          />
-          <motion.div
-            className="absolute left-1/2 top-1/2 -ml-[45vmax] -mt-[45vmax] h-[90vmax] w-[90vmax]"
-            style={{
-              x: lionX,
-              y: lionY,
-              background: "radial-gradient(closest-side, rgba(255,96,0,0.2), rgba(255,96,0,0.06) 55%, transparent)",
-            }}
-          />
-          <motion.div
-            className="absolute left-1/2 top-1/2 -ml-[45vmax] -mt-[45vmax] h-[90vmax] w-[90vmax]"
-            style={{
-              x: bearX,
-              y: bearY,
-              background: "radial-gradient(closest-side, rgba(10,85,156,0.5), rgba(10,85,156,0.14) 55%, transparent)",
-            }}
-          />
-        </div>
+        {/* 곰이 무너졌다가 사자로 다시 모이는 입체 파티클. 배경은 순수 검정으로 비워 두고 입자의 빛만 씁니다. */}
+        <ParticleEmblem
+          scatter={scatter}
+          mobile={mobile}
+          still={reduce}
+          className="pointer-events-none absolute inset-0 h-full w-full"
+        />
 
-        {/* 흩어져 있다가 스크롤하면 한 줄로 정렬되는 프로덕트 화면 */}
+        {/* 파티클이 흩어진 자리에 나타나는 프로덕트 화면 */}
         <ul className="pointer-events-none absolute inset-0" aria-label={`${year}년에 만든 서비스 화면`}>
           {allProducts.map((p, i) => (
-            <FloatingCard
+            <RowCard
               key={`${p.id}-${mobile ? "m" : "d"}`}
               product={p}
               index={i}
@@ -172,86 +106,87 @@ export function HeroSection() {
           ))}
         </ul>
 
-        <div className="relative z-20 mx-auto flex w-full max-w-5xl flex-1 flex-col items-center justify-center px-5 pb-[27svh] pt-20 text-center">
-          <motion.p
-            className="font-display text-xs font-semibold tracking-[0.24em] text-[#FF6000] md:text-sm"
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, ease: EASE }}
-          >
-            LIKELION{" "}
-            <span aria-hidden className="text-white/30">
-              ·
-            </span>{" "}
-            <span className="text-bear-light">DANKOOK UNIV.</span>
-          </motion.p>
-
-          <motion.h1
-            className="mt-6 text-[2.35rem] font-bold leading-[1.1] tracking-[-0.03em] text-white sm:text-6xl md:text-[clamp(3.25rem,9.5svh,4.5rem)] lg:text-[clamp(3.5rem,10.5svh,5.5rem)]"
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.05, ease: EASE }}
-          >
-            아이디어를
-            <br />
-            서비스로 만드는 곳
-          </motion.h1>
-
-          <motion.p
-            className="mt-6 max-w-xl text-base leading-relaxed text-white/60 md:mt-7 md:text-lg"
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.15, ease: EASE }}
-          >
-            기획 · 디자인 · 프론트엔드 · 백엔드가 한 팀이 되어
-            <br className="hidden sm:block" /> 문제를 찾고, 직접 만들어 세상에 내놓습니다.
-          </motion.p>
-
-          <motion.div
-            className="mt-8 flex w-full flex-col items-center justify-center gap-3 sm:w-auto sm:flex-row md:mt-10"
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.25, ease: EASE }}
-          >
-            <a
-              href="#about"
-              className="w-full rounded-xl bg-[#FF6000] px-7 py-3.5 text-base font-semibold text-white press hover:bg-[#ff7420] sm:w-auto"
+        <div className="relative z-20 mx-auto flex w-full max-w-7xl flex-1 flex-col justify-start px-5 pb-[27svh] pt-[41svh] sm:px-8 md:justify-center md:pb-[17svh] md:pt-24">
+          <div className="flex flex-col items-center text-center md:w-1/2 md:items-start md:text-left">
+            <motion.p
+              className="font-display text-xs font-semibold tracking-[0.24em] text-[#FF6000] md:text-sm"
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, ease: EASE }}
             >
-              우리를 소개합니다
-            </a>
-            <a
-              href="#projects"
-              className="w-full rounded-xl bg-[#0B0B0B]/70 px-7 py-3.5 text-base font-semibold text-white ring-1 ring-inset ring-white/20 press hover:bg-[#1c1c1c] sm:w-auto"
-            >
-              만든 것들 보기
-            </a>
-          </motion.div>
+              LIKELION{" "}
+              <span aria-hidden className="text-white/30">
+                ·
+              </span>{" "}
+              <span className="text-bear-light">DANKOOK UNIV.</span>
+            </motion.p>
 
-          <motion.div
-            className="mt-7 flex items-center gap-4"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.7, delay: 0.4 }}
-          >
-            <img
-              src={likelionUnivLogo}
-              alt="멋쟁이사자처럼 대학"
-              width={395}
-              height={72}
-              className="h-[18px] w-auto opacity-75 md:h-5"
-            />
-            <span className="h-3.5 w-px bg-white/20" />
-            <img
-              src={startupLogo}
-              alt="단국대학교 창업지원단"
-              width={368}
-              height={72}
-              className="h-[18px] w-auto opacity-75 md:h-5"
-            />
-          </motion.div>
+            <motion.h1
+              className="mt-5 text-[2.5rem] font-medium leading-[1.06] tracking-[-0.045em] text-white sm:text-5xl md:mt-7 md:text-[clamp(3rem,min(5.7vw,11.5svh),6.25rem)]"
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.05, ease: EASE }}
+            >
+              아이디어를
+              <br />
+              서비스로 만드는 곳
+            </motion.h1>
+
+            <motion.p
+              className="mt-5 max-w-md text-[15px] font-light leading-relaxed text-white/75 md:mt-8 md:text-lg"
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.15, ease: EASE }}
+            >
+              기획 · 디자인 · 프론트엔드 · 백엔드가 한 팀이 되어 문제를 찾고, 직접 만들어 세상에 내놓습니다.
+            </motion.p>
+
+            <motion.div
+              className="mt-7 flex w-full gap-3 sm:w-auto md:mt-9"
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.25, ease: EASE }}
+            >
+              <a
+                href="#about"
+                className="press flex-1 rounded-full bg-[#FF6000] px-4 py-3.5 text-center text-[15px] font-semibold text-white hover:bg-[#ff7420] sm:flex-none sm:px-7"
+              >
+                우리를 소개합니다
+              </a>
+              <a
+                href="#projects"
+                className="press flex-1 rounded-full bg-black/60 px-4 py-3.5 text-center text-[15px] font-semibold text-white ring-1 ring-inset ring-white/25 hover:bg-[#1c1c1c] sm:flex-none sm:px-7"
+              >
+                만든 것들 보기
+              </a>
+            </motion.div>
+
+            <motion.div
+              className="mt-7 flex items-center gap-4 [@media(max-height:700px)]:hidden"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.7, delay: 0.4 }}
+            >
+              <img
+                src={likelionUnivLogo}
+                alt="멋쟁이사자처럼 대학"
+                width={395}
+                height={72}
+                className="h-[18px] w-auto opacity-75 md:h-5"
+              />
+              <span className="h-3.5 w-px bg-white/20" />
+              <img
+                src={startupLogo}
+                alt="단국대학교 창업지원단"
+                width={368}
+                height={72}
+                className="h-[18px] w-auto opacity-75 md:h-5"
+              />
+            </motion.div>
+          </div>
         </div>
 
-        {/* 처음엔 스크롤 안내, 정렬이 끝나면 프로젝트로 가는 링크 */}
+        {/* 처음엔 스크롤 안내, 프로덕트 줄이 나타나면 프로젝트로 가는 링크 */}
         <div className="absolute inset-x-0 bottom-5 z-20 mx-auto flex max-w-7xl items-center justify-center px-5 text-sm sm:px-8">
           {!reduce && (
             <motion.span aria-hidden className="hero-hint absolute text-white/50" style={{ opacity: hintOpacity }}>
