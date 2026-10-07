@@ -9,7 +9,7 @@ export function Footer() {
           <p className="text-[15px] font-bold text-white">
             LIKELION <span className="font-medium text-bear-light">DANKOOK UNIV.</span>
           </p>
-          <p className="mt-2 text-sm text-white/40">
+          <p className="mt-2 text-sm text-white/50">
             © {new Date().getFullYear()} 멋쟁이사자처럼 단국대학교. All rights reserved.
           </p>
         </div>

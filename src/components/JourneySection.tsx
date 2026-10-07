@@ -48,7 +48,7 @@ export function JourneySection() {
                       highlight ? "border-[#FF6000] bg-[#FF6000]" : "border-white/40 bg-[#0B0B0B]"
                     }`}
                   />
-                  <p className="text-sm tabular-nums text-white/40 md:mt-6">{m.date ?? " "}</p>
+                  <p className="text-sm tabular-nums text-white/50 md:mt-6">{m.date ?? " "}</p>
                   <h3 className={`mt-1 text-lg font-bold ${highlight ? "text-[#FF6000]" : "text-white"}`}>
                     {m.title}
                   </h3>

@@ -3,8 +3,8 @@ import { ArrowDown } from "lucide-react";
 import { allProducts, productGroups } from "../data/products";
 import { EASE } from "./layout";
 
-const likelionUnivLogo = new URL("../assets/logo-likelion-univ.png", import.meta.url).href;
-const startupLogo = new URL("../assets/logo-dku-startup.png", import.meta.url).href;
+const likelionUnivLogo = new URL("../assets/logo-likelion-univ.webp", import.meta.url).href;
+const startupLogo = new URL("../assets/logo-dku-startup.webp", import.meta.url).href;
 
 const year = productGroups[0]?.year;
 
@@ -16,7 +16,7 @@ function ProductStrip() {
   return (
     <div className="relative z-10 pb-10">
       <div className="mx-auto mb-4 flex max-w-7xl items-center justify-between px-5 text-sm sm:px-8">
-        <span className="text-white/45">
+        <span className="text-white/50">
           {year} 우리가 만든 서비스 {allProducts.length}개
         </span>
         <a
@@ -77,7 +77,7 @@ export function HeroSection() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: EASE }}
         >
-          LIKELION <span className="text-white/30">·</span>{" "}
+          LIKELION <span aria-hidden className="text-white/30">·</span>{" "}
           <span className="text-bear-light">DANKOOK UNIV.</span>
         </motion.p>
         <motion.h1
@@ -124,9 +124,9 @@ export function HeroSection() {
           animate={{ opacity: 1 }}
           transition={{ duration: 0.7, delay: 0.4 }}
         >
-          <img src={likelionUnivLogo} alt="멋쟁이사자처럼 대학" className="h-6 w-auto opacity-75 md:h-7" />
+          <img src={likelionUnivLogo} alt="멋쟁이사자처럼 대학" width={395} height={72} className="h-6 w-auto opacity-75 md:h-7" />
           <span className="h-4 w-px bg-white/20" />
-          <img src={startupLogo} alt="단국대학교 창업지원단" className="h-6 w-auto opacity-75 md:h-7" />
+          <img src={startupLogo} alt="단국대학교 창업지원단" width={368} height={72} className="h-6 w-auto opacity-75 md:h-7" />
         </motion.div>
       </div>
 

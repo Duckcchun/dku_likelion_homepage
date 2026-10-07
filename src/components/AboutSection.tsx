@@ -1,6 +1,6 @@
 import { allProducts, productGroups } from "../data/products";
 import { generation, members, tracks } from "../data/site";
-import emblem from "../assets/emblem-lion-bear.png";
+import emblem from "../assets/emblem-lion-bear.webp";
 import { Container, Reveal, SectionHeader } from "./layout";
 
 const values = [
@@ -44,7 +44,7 @@ export function AboutSection() {
         <div className="grid gap-px overflow-hidden rounded-2xl bg-white/[0.08] md:grid-cols-3">
           {values.map((v, i) => (
             <Reveal key={v.title} delay={i * 0.06} className="bg-[#0B0B0B] p-7 md:p-9">
-              <p className="text-sm tabular-nums text-white/35">0{i + 1}</p>
+              <p className="text-sm tabular-nums text-white/50">0{i + 1}</p>
               <h3 className="mt-8 text-xl font-bold text-white md:text-2xl">{v.title}</h3>
               <p className="mt-3 text-[15px] leading-relaxed text-white/55">{v.description}</p>
             </Reveal>
@@ -80,8 +80,8 @@ export function AboutSection() {
             <img
               src={emblem}
               alt="멋쟁이사자처럼 단국대학교 엠블럼. 사자 갈기를 쓴 곰의 얼굴"
-              width={720}
-              height={720}
+              width={512}
+              height={512}
               loading="lazy"
               className="order-first h-36 w-36 shrink-0 md:order-none md:h-64 md:w-64"
             />
@@ -92,7 +92,7 @@ export function AboutSection() {
           {stats.map((s) => (
             <div key={s.label}>
               <p className="text-4xl font-bold tracking-tight text-white tabular-nums md:text-5xl">{s.value}</p>
-              <p className="mt-2 text-sm text-white/45">{s.label}</p>
+              <p className="mt-2 text-sm text-white/50">{s.label}</p>
             </div>
           ))}
         </Reveal>

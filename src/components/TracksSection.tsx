@@ -23,20 +23,20 @@ export function TracksSection() {
             <Reveal key={t.id} delay={i * 0.06} className="flex flex-col bg-[#0F0F0F] p-7">
               <div className="flex items-baseline justify-between">
                 <h3 className="text-2xl font-bold text-white">{t.title}</h3>
-                <span className="text-sm text-white/40">{t.ko}</span>
+                <span className="text-sm text-white/50">{t.ko}</span>
               </div>
               <p className="mt-4 min-h-[3.2em] text-[15px] leading-relaxed text-white/60">{t.description}</p>
 
               <ol className="mt-7 space-y-2.5 border-t border-white/[0.08] pt-6">
                 {t.curriculum.map((c, n) => (
                   <li key={c} className="flex gap-3 text-[14px] leading-snug text-white/75">
-                    <span className="w-5 shrink-0 tabular-nums text-white/30">{n + 1}</span>
+                    <span className="w-5 shrink-0 tabular-nums text-white/50">{n + 1}</span>
                     {c}
                   </li>
                 ))}
               </ol>
 
-              <p className="mt-auto pt-8 text-[13px] leading-relaxed text-white/40">{t.tools.join(" · ")}</p>
+              <p className="mt-auto pt-8 text-[13px] leading-relaxed text-white/50">{t.tools.join(" · ")}</p>
             </Reveal>
           ))}
         </div>

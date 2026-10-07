@@ -1,6 +1,5 @@
-import { useEffect, useState, type FormEvent } from "react";
+import { useState, type FormEvent } from "react";
 import { AlertCircle, ArrowUpRight, CheckCircle, Instagram, Mail, MapPin } from "lucide-react";
-import emailjs from "@emailjs/browser";
 import { contact, generation, recruit } from "../data/site";
 import { Container, Reveal, SectionHeader } from "./layout";
 
@@ -11,23 +10,13 @@ const EMAILJS_TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
 const EMAILJS_TO_EMAIL = import.meta.env.VITE_EMAILJS_TO_EMAIL || contact.email;
 
 const inputClass =
-  "w-full rounded-lg bg-[#161616] px-4 py-3 text-[15px] text-white placeholder:text-white/30 ring-1 ring-inset ring-white/10 transition-shadow focus:outline-none focus:ring-2 focus:ring-[#FF6000]";
+  "w-full rounded-lg bg-[#161616] px-4 py-3 text-[15px] text-white placeholder:text-white/50 ring-1 ring-inset ring-white/10 transition-shadow focus:outline-none focus:ring-2 focus:ring-[#FF6000]";
 
 function InquiryForm() {
   const [form, setForm] = useState({ name: "", email: "", message: "" });
   const [submitting, setSubmitting] = useState(false);
   const [status, setStatus] = useState<"idle" | "success" | "error">("idle");
   const [statusMessage, setStatusMessage] = useState("");
-
-  useEffect(() => {
-    if (EMAILJS_PUBLIC_KEY) {
-      try {
-        emailjs.init(EMAILJS_PUBLIC_KEY);
-      } catch {
-        console.warn("EmailJS 초기화에 실패했습니다. 환경변수를 확인해주세요.");
-      }
-    }
-  }, []);
 
   const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -40,13 +29,20 @@ function InquiryForm() {
     setStatus("idle");
     try {
       if (EMAILJS_PUBLIC_KEY && EMAILJS_SERVICE_ID && EMAILJS_TEMPLATE_ID) {
-        await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
-          to_email: EMAILJS_TO_EMAIL,
-          from_name: form.name,
-          from_email: form.email,
-          message: form.message,
-          reply_to: form.email,
-        });
+        // 폼을 실제로 보낼 때만 EmailJS를 불러옵니다. (첫 화면 로딩을 가볍게)
+        const { default: emailjs } = await import("@emailjs/browser");
+        await emailjs.send(
+          EMAILJS_SERVICE_ID,
+          EMAILJS_TEMPLATE_ID,
+          {
+            to_email: EMAILJS_TO_EMAIL,
+            from_name: form.name,
+            from_email: form.email,
+            message: form.message,
+            reply_to: form.email,
+          },
+          { publicKey: EMAILJS_PUBLIC_KEY },
+        );
       } else {
         // 데모 모드: 환경변수가 없으면 전송을 흉내만 냅니다.
         await new Promise((r) => setTimeout(r, 1200));
@@ -167,14 +163,14 @@ export function JoinSection() {
               </a>
 
               <div className="mt-8 border-t border-white/[0.08] pt-6">
-                <p className="text-sm text-white/40">
+                <p className="text-sm text-white/50">
                   {recruit.isOpen ? "모집 일정" : `지난 ${generation}기 모집 일정`}
                 </p>
                 <dl className="mt-4 space-y-3">
                   {recruit.schedule.map((s) => (
                     <div key={s.phase} className="flex justify-between gap-4 text-[14px]">
                       <dt className="text-white/75">{s.phase}</dt>
-                      <dd className="tabular-nums text-white/45">{s.period}</dd>
+                      <dd className="tabular-nums text-white/50">{s.period}</dd>
                     </div>
                   ))}
                 </dl>
@@ -193,13 +189,13 @@ export function JoinSection() {
             <ul className="mt-12 grid gap-4 border-t border-white/[0.08] pt-8 text-[14px] sm:grid-cols-3">
               <li>
                 <a href={`mailto:${contact.email}`} className="group flex items-start gap-3">
-                  <Mail className="mt-0.5 h-4 w-4 shrink-0 text-white/40" />
+                  <Mail className="mt-0.5 h-4 w-4 shrink-0 text-white/50" />
                   <span className="break-all text-white/70 group-hover:text-white">{contact.email}</span>
                 </a>
               </li>
               <li>
                 <a href={contact.instagram.url} target="_blank" rel="noopener noreferrer" className="group flex items-start gap-3">
-                  <Instagram className="mt-0.5 h-4 w-4 shrink-0 text-white/40" />
+                  <Instagram className="mt-0.5 h-4 w-4 shrink-0 text-white/50" />
                   <span className="text-white/70 group-hover:text-white">{contact.instagram.handle}</span>
                 </a>
               </li>

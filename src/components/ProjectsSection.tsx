@@ -56,7 +56,7 @@ function ProductCard({
       </button>
 
       <div className="mt-5 flex flex-1 flex-col">
-        <p className="text-xs font-medium uppercase tracking-[0.14em] text-white/40">{product.category}</p>
+        <p className="text-xs font-medium uppercase tracking-[0.14em] text-white/50">{product.category}</p>
         <h4 className={`mt-2 font-bold text-white ${large ? "text-2xl md:text-[1.75rem]" : "text-xl md:text-2xl"}`}>
           {product.name}
         </h4>
@@ -156,7 +156,7 @@ function GroupBlock({ group, onOpen }: { group: ProductGroup; onOpen: (p: Produc
       <Reveal className="mb-10 flex flex-col gap-3 border-t border-white/[0.1] pt-8 md:flex-row md:items-baseline md:justify-between">
         <div className="flex items-baseline gap-4">
           <h3 className="text-2xl font-bold text-white md:text-3xl">{group.label}</h3>
-          <span className="text-sm tabular-nums text-white/40">
+          <span className="text-sm tabular-nums text-white/50">
             {group.year} · {group.products.length}개
           </span>
         </div>
@@ -198,7 +198,7 @@ export function ProjectsSection() {
                   href={`#${g.id}`}
                   className="rounded-full px-3.5 py-1.5 text-sm font-medium text-white/80 ring-1 ring-inset ring-white/15 transition-colors hover:bg-white hover:text-[#0B0B0B]"
                 >
-                  {g.label} <span className="tabular-nums text-white/40">{g.products.length}</span>
+                  {g.label} <span className="tabular-nums text-white/50">{g.products.length}</span>
                 </a>
               ))}
             </div>
