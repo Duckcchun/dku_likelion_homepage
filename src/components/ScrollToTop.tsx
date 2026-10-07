@@ -27,7 +27,7 @@ export function ScrollToTop() {
         whileTap={{ scale: 0.95 }}
         transition={{ duration: 0.2 }}
         onClick={scrollToTop}
-        className="fixed bottom-8 right-8 z-40 p-4 bg-gradient-to-br from-[#FF6000] to-[#ff7a26] text-white rounded-full shadow-lg hover:shadow-xl transition-shadow"
+        className="fixed bottom-6 right-6 z-40 rounded-full bg-white/10 p-3 text-white ring-1 ring-inset ring-white/15 backdrop-blur-md transition-colors hover:bg-white hover:text-[#0B0B0B]"
         title="맨 위로 이동"
         aria-label="맨 위로 이동"
         style={{
@@ -35,10 +35,10 @@ export function ScrollToTop() {
         }}
       >
         <motion.div
-          animate={isVisible ? { y: [0, -3, 0] } : {}}
+          
           transition={{ duration: 2, repeat: Infinity }}
         >
-          <ArrowUp className="w-6 h-6" />
+          <ArrowUp className="h-5 w-5" />
         </motion.div>
       </motion.button>
     </>

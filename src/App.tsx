@@ -1,41 +1,34 @@
+import { Navigation } from "./components/Navigation";
 import { HeroSection } from "./components/HeroSection";
 import { AboutSection } from "./components/AboutSection";
+import { TracksSection } from "./components/TracksSection";
+import { JourneySection } from "./components/JourneySection";
 import { ProjectsSection } from "./components/ProjectsSection";
-import { CurriculumSection } from "./components/CurriculumSection";
-import { ScheduleSection } from "./components/ScheduleSection";
 import { PeopleSection } from "./components/PeopleSection";
-import { ContactSection } from "./components/ContactSection";
+import { JoinSection } from "./components/JoinSection";
 import { Footer } from "./components/Footer";
-import { Navigation } from "./components/Navigation";
-import { PageTransition } from "./components/PageTransition";
 import { ScrollToTop } from "./components/ScrollToTop";
-import { LoadingScreen } from "./components/LoadingScreen";
-import { ProgressBar } from "./components/ProgressBar";
-import { useState } from "react";
 
+/**
+ * 페이지 흐름: 소개 → 배우는 것(트랙) → 1년의 흐름 → 만든 것(프로젝트) → 사람 → 함께하기
+ * 프로젝트가 갑자기 튀어나오지 않도록, '어떻게 배우고 어떤 행사를 거쳐 만들었는지'를
+ * 먼저 보여 준 뒤 결과물로 이어집니다.
+ */
 export default function App() {
-  const [isLoading, setIsLoading] = useState(true);
-
   return (
-    <>
-      <ProgressBar />
-      {isLoading && <LoadingScreen onComplete={() => setIsLoading(false)} />}
-      {!isLoading && (
-        <PageTransition>
-          <div className="bg-[#1C1C1C] min-h-screen">
-            <Navigation />
-            <HeroSection />
-            <ProjectsSection />
-            <AboutSection />
-            <ScheduleSection />
-            <CurriculumSection />
-            <PeopleSection />
-            <ContactSection />
-            <Footer />
-            <ScrollToTop />
-          </div>
-        </PageTransition>
-      )}
-    </>
+    <div className="min-h-screen bg-[#0B0B0B] text-white antialiased">
+      <Navigation />
+      <main>
+        <HeroSection />
+        <AboutSection />
+        <TracksSection />
+        <JourneySection />
+        <ProjectsSection />
+        <PeopleSection />
+        <JoinSection />
+      </main>
+      <Footer />
+      <ScrollToTop />
+    </div>
   );
 }

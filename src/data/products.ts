@@ -3,6 +3,10 @@ import ieum from "../assets/products/ieum.webp";
 import firstline from "../assets/products/firstline.webp";
 import catchcut from "../assets/products/catchcut.webp";
 import orbit from "../assets/products/orbit.webp";
+import mowa from "../assets/products/mowa.webp";
+import mcmoments from "../assets/products/mcmoments.webp";
+import tomo from "../assets/products/tomo.webp";
+import banana from "../assets/products/banana.webp";
 
 export interface Product {
   id: string;
@@ -14,26 +18,35 @@ export interface Product {
   /** 분야 태그 */
   category: string;
   image: string;
-  /** 이미지 크롭 기준점 (object-position) */
+  /** 이미지 크롭 기준점 (CSS object-position) */
   imagePosition?: string;
   /** 링크가 없으면 비워 두세요. 버튼이 자동으로 숨겨집니다. */
   link?: string;
 }
 
 export interface ProductGroup {
-  /** 예: "2026 멋사대학 아이디어톤" */
+  /** 페이지 내 앵커 id (예: #projects-hackathon) */
+  id: string;
+  /** 행사 이름 */
   event: string;
+  /** 짧은 라벨 (탭·타임라인용) */
+  label: string;
   year: number;
+  /** 행사 한 줄 설명 */
+  summary: string;
   products: Product[];
 }
 
 /**
- * 새 행사 결과물이 생기면 이 배열 맨 앞에 그룹을 하나 추가하면 됩니다.
+ * 한 해의 진행 순서대로 적어 주세요. (아이디어톤 → 해커톤 → …)
  */
 export const productGroups: ProductGroup[] = [
   {
-    event: "멋사대학 아이디어톤",
+    id: "projects-ideathon",
+    event: "멋쟁이사자처럼 대학 아이디어톤",
+    label: "아이디어톤",
     year: 2026,
+    summary: "문제를 정의하고, 사용자를 만나고, 서비스를 기획·프로토타이핑한 결과물입니다.",
     products: [
       {
         id: "catchcut",
@@ -90,4 +103,55 @@ export const productGroups: ProductGroup[] = [
       },
     ],
   },
+  {
+    id: "projects-hackathon",
+    event: "멋쟁이사자처럼 중앙 해커톤",
+    label: "중앙 해커톤",
+    year: 2026,
+    summary: "기획한 서비스를 디자인하고 실제로 동작하는 프로덕트까지 개발한 결과물입니다.",
+    products: [
+      {
+        id: "tomo",
+        name: "TOMO",
+        tagline: "언어를 넘어 협업의 맥락까지 현지화하는 Gmail AI 에이전트",
+        description:
+          "해외 파트너에게 보낼 메일을 분석해 문화·관계상 오해가 생길 수 있는 표현을 짚어 주고, 의도는 지키면서 상대에게 맞게 다듬은 문장을 Gmail 본문에 바로 적용합니다.",
+        category: "Productivity",
+        image: tomo,
+        imagePosition: "center 30%",
+      },
+      {
+        id: "mowa",
+        name: "MOWA",
+        tagline: "걷기를 알아서 감지해 산책을 추억으로 남겨 주는 기록 앱",
+        description:
+          "식사 후나 귀갓길처럼 의식하지 못한 채 시작된 산책도 걷기를 감지해 기록을 제안합니다. 사진과 짧은 입력만 남기면 AI가 그날의 산책 일기로 정리해 줍니다.",
+        category: "Lifestyle",
+        image: mowa,
+        imagePosition: "center",
+      },
+      {
+        id: "banana",
+        name: "반나나",
+        tagline: "모두의 이동시간과 날씨를 고려해 공평한 만남 장소를 찾아 주는 서비스",
+        description:
+          "약속방 링크를 공유하면 각자 출발지만 입력하면 됩니다. 실제 이동시간 기준의 중간지점을 찾고, 약속 날 날씨에 맞는 카페·식당·놀거리까지 추천합니다.",
+        category: "Local · Social",
+        image: banana,
+        imagePosition: "center 32%",
+      },
+      {
+        id: "mcmoments",
+        name: "MCMoments",
+        tagline: "첫 MCM 구매의 순간을 AI 아트워크로 소장하는 디지털 다이어리",
+        description:
+          "제품을 등록하고 구매 사연을 남기면 AI가 감정을 분석해 비세토스 패턴을 입힌 나만의 아트워크 보증서를 만듭니다. 소장품은 My Collection에 쌓이고, 어울리는 다음 제품을 제안합니다.",
+        category: "Brand · Luxury",
+        image: mcmoments,
+        imagePosition: "center 52%",
+      },
+    ],
+  },
 ];
+
+export const allProducts = productGroups.flatMap((g) => g.products);

@@ -1,163 +1,133 @@
-import { motion, useScroll, useTransform, useReducedMotion } from "motion/react";
-import { useRef } from "react";
+import { motion, useReducedMotion } from "motion/react";
 import { ArrowDown } from "lucide-react";
-import { productGroups } from "../data/products";
+import { allProducts, productGroups } from "../data/products";
+import { EASE } from "./layout";
 
-const likelionUnivLogo = new URL(
-  "../assets/logo-likelion-univ.png",
-  import.meta.url,
-).href;
+const likelionUnivLogo = new URL("../assets/logo-likelion-univ.png", import.meta.url).href;
+const startupLogo = new URL("../assets/logo-dku-startup.png", import.meta.url).href;
 
-const startupLogo = new URL(
-  "../assets/logo-dku-startup.png",
-  import.meta.url,
-).href;
+const year = productGroups[0]?.year;
 
-const latest = productGroups[0];
-
-/** 첫 화면 하단에서 올해 프로덕트 화면이 천천히 흘러가는 띠 (Spline 3D 대체) */
+/** 첫 화면 하단: 올해 만든 프로덕트 화면이 천천히 흐르는 띠 (미리보기) */
 function ProductStrip() {
   const reduce = useReducedMotion();
-  // 끊김 없는 루프를 위해 두 번 이어 붙임
-  const items = [...latest.products, ...latest.products];
+  const items = [...allProducts, ...allProducts]; // 끊김 없는 루프
 
   return (
-    <a
-      href="#projects"
-      aria-label={`${latest.year} ${latest.event} 프로젝트 보러 가기`}
-      className="group absolute inset-x-0 bottom-0 z-30 block pb-8"
-    >
-      <div className="mx-auto mb-4 flex max-w-7xl items-center justify-between px-4 text-sm sm:px-6 lg:px-8">
-        <span className="text-white/50">
-          {latest.year} {latest.event} 프로젝트 {latest.products.length}
+    <div className="relative z-10 pb-10">
+      <div className="mx-auto mb-4 flex max-w-7xl items-center justify-between px-5 text-sm sm:px-8">
+        <span className="text-white/45">
+          {year} 우리가 만든 서비스 {allProducts.length}개
         </span>
-        <span className="inline-flex items-center gap-1 font-semibold text-white/70 transition-colors group-hover:text-[#FF6000]">
-          보러 가기 <ArrowDown className="h-4 w-4" />
-        </span>
+        <a
+          href="#projects"
+          className="inline-flex items-center gap-1 font-medium text-white/70 transition-colors hover:text-[#FF6000]"
+        >
+          전체 보기 <ArrowDown className="h-4 w-4" />
+        </a>
       </div>
-
-      <div className="relative overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_8%,black_92%,transparent)]">
-        <motion.div
-          className="flex w-max gap-4"
+      <div className="overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_6%,black_94%,transparent)]">
+        <motion.ul
+          className="flex w-max gap-3 md:gap-4"
           animate={reduce ? undefined : { x: ["0%", "-50%"] }}
-          transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
+          transition={{ duration: 60, repeat: Infinity, ease: "linear" }}
         >
           {items.map((p, i) => (
-            <div
+            <li
               key={`${p.id}-${i}`}
-              className="h-28 w-48 shrink-0 overflow-hidden rounded-lg ring-1 ring-white/10 md:h-36 md:w-64"
-              aria-hidden={i >= latest.products.length}
+              aria-hidden={i >= allProducts.length}
+              className="h-24 w-40 shrink-0 overflow-hidden rounded-lg bg-[#161616] ring-1 ring-white/[0.08] md:h-32 md:w-56"
             >
               <img
                 src={p.image}
-                alt=""
-                className="h-full w-full object-cover opacity-60 transition-opacity duration-300 group-hover:opacity-90"
+                alt={i < allProducts.length ? `${p.name} 화면` : ""}
+                className="h-full w-full object-cover opacity-70"
                 style={{ objectPosition: p.imagePosition ?? "center" }}
               />
-            </div>
+            </li>
           ))}
-        </motion.div>
+        </motion.ul>
       </div>
-    </a>
+    </div>
   );
 }
 
 export function HeroSection() {
-  const showRecruitClosedAlert = () => {
-    window.alert("모집 기간이 아닙니다.");
-  };
-
-  const ref = useRef<HTMLElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ["start start", "end start"],
-  });
-  const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
-
   return (
-    <section
-      ref={ref}
-      className="relative flex min-h-[100svh] items-center justify-center overflow-hidden bg-[#0A0A0A]"
-    >
-      {/* 배경: 은은한 그리드 + 상단 주황 빛 */}
-      <div className="pointer-events-none absolute inset-0 z-0">
+    <section id="top" className="relative flex min-h-[100svh] flex-col overflow-hidden bg-[#0B0B0B]">
+      {/* 배경 */}
+      <div className="pointer-events-none absolute inset-0">
         <div
-          className="absolute inset-0 opacity-60"
+          className="absolute inset-0"
           style={{
             backgroundImage:
-              "linear-gradient(rgba(255,255,255,0.035) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px)",
-            backgroundSize: "64px 64px",
-            maskImage: "radial-gradient(ellipse at 50% 35%, black 20%, transparent 70%)",
-            WebkitMaskImage: "radial-gradient(ellipse at 50% 35%, black 20%, transparent 70%)",
+              "linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px)",
+            backgroundSize: "72px 72px",
+            maskImage: "radial-gradient(ellipse 70% 60% at 50% 30%, black, transparent)",
+            WebkitMaskImage: "radial-gradient(ellipse 70% 60% at 50% 30%, black, transparent)",
           }}
         />
-        <div className="absolute left-1/2 top-0 h-[480px] w-[900px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#FF6000]/10 blur-[120px]" />
+        <div className="absolute left-1/2 top-0 h-[420px] w-[820px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#FF6000]/[0.12] blur-[120px]" />
       </div>
 
-      <motion.div
-        className="relative z-20 mx-auto max-w-5xl px-4 pb-56 pt-32 text-center md:pb-64"
-        style={{ opacity }}
-      >
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-        >
-          <p className="text-sm font-semibold tracking-[0.2em] text-[#FF6000]">
-            LIKELION · DANKOOK UNIV.
-          </p>
-          <h1 className="mt-6 text-5xl font-bold leading-[1.1] text-white md:text-7xl lg:text-8xl">
-            아이디어를
-            <br />
-            서비스로 만드는 곳
-          </h1>
-        </motion.div>
-
+      <div className="relative z-10 mx-auto flex w-full max-w-5xl flex-1 flex-col items-center justify-center px-5 pb-12 pt-32 text-center">
         <motion.p
-          className="mx-auto mt-8 max-w-2xl text-lg leading-relaxed text-white/60 md:text-xl"
+          className="text-xs font-semibold tracking-[0.24em] text-[#FF6000] md:text-sm"
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: EASE }}
+        >
+          LIKELION · DANKOOK UNIV.
+        </motion.p>
+        <motion.h1
+          className="mt-6 text-[2.35rem] font-bold leading-[1.1] tracking-[-0.03em] text-white sm:text-6xl md:text-7xl lg:text-[5.5rem]"
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.15, duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ duration: 0.7, delay: 0.05, ease: EASE }}
+        >
+          아이디어를
+          <br />
+          서비스로 만드는 곳
+        </motion.h1>
+        <motion.p
+          className="mt-7 max-w-xl text-base leading-relaxed text-white/60 md:text-lg"
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, delay: 0.15, ease: EASE }}
         >
           기획 · 디자인 · 프론트엔드 · 백엔드가 한 팀이 되어
-          <br className="hidden md:block" /> 문제를 찾고, 직접 만들어 세상에 내놓습니다.
+          <br className="hidden sm:block" /> 문제를 찾고, 직접 만들어 세상에 내놓습니다.
         </motion.p>
-
         <motion.div
-          className="mt-12 flex flex-col items-center justify-center gap-3 sm:flex-row"
+          className="mt-10 flex w-full flex-col items-center justify-center gap-3 sm:w-auto sm:flex-row"
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3, duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ duration: 0.7, delay: 0.25, ease: EASE }}
         >
+          <a
+            href="#about"
+            className="w-full rounded-xl bg-[#FF6000] px-7 py-3.5 text-base font-semibold text-white transition-[background-color,transform] duration-200 hover:bg-[#ff7420] active:scale-[0.98] sm:w-auto"
+          >
+            우리를 소개합니다
+          </a>
           <a
             href="#projects"
-            className="rounded-xl bg-[#FF6000] px-8 py-4 text-lg font-bold text-white transition-[background-color,transform] duration-200 hover:bg-[#ff7420] active:scale-[0.97]"
+            className="w-full rounded-xl px-7 py-3.5 text-base font-semibold text-white ring-1 ring-inset ring-white/20 transition-[background-color,transform] duration-200 hover:bg-white/5 active:scale-[0.98] sm:w-auto"
           >
-            프로젝트 보기
-          </a>
-          <a
-            href="https://dku-lion.vercel.app/"
-            onClick={(e) => {
-              e.preventDefault();
-              showRecruitClosedAlert();
-            }}
-            className="rounded-xl px-8 py-4 text-lg font-bold text-white ring-1 ring-white/20 transition-[background-color,transform] duration-200 hover:bg-white/5 active:scale-[0.97]"
-          >
-            지원하기
+            만든 것들 보기
           </a>
         </motion.div>
-
         <motion.div
-          className="mt-10 flex items-center justify-center gap-5"
+          className="mt-10 flex items-center gap-5"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.5, duration: 0.7 }}
+          transition={{ duration: 0.7, delay: 0.4 }}
         >
-          <img src={likelionUnivLogo} alt="멋쟁이사자처럼 대학" className="h-7 w-auto opacity-80 md:h-8" />
+          <img src={likelionUnivLogo} alt="멋쟁이사자처럼 대학" className="h-6 w-auto opacity-75 md:h-7" />
           <span className="h-4 w-px bg-white/20" />
-          <img src={startupLogo} alt="단국대학교 창업지원단" className="h-7 w-auto opacity-80 md:h-8" />
+          <img src={startupLogo} alt="단국대학교 창업지원단" className="h-6 w-auto opacity-75 md:h-7" />
         </motion.div>
-      </motion.div>
+      </div>
 
       <ProductStrip />
     </section>

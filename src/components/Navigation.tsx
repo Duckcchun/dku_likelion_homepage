@@ -1,165 +1,106 @@
-import { motion, useScroll, useMotionValueEvent } from "motion/react";
-import { useState } from "react";
+import { AnimatePresence, motion } from "motion/react";
+import { useEffect, useState } from "react";
 import { Menu, X } from "lucide-react";
 import dankookLogo from "../assets/dankook-logo.png";
+import { recruit } from "../data/site";
+
+const navItems = [
+  { label: "소개", href: "#about" },
+  { label: "트랙", href: "#tracks" },
+  { label: "1년의 흐름", href: "#journey" },
+  { label: "프로젝트", href: "#projects" },
+  { label: "사람들", href: "#people" },
+];
 
 export function Navigation() {
-  const showRecruitClosedAlert = () => {
-    window.alert("모집 기간이 아닙니다.");
-  };
+  const [scrolled, setScrolled] = useState(false);
+  const [open, setOpen] = useState(false);
 
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const { scrollY } = useScroll();
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 24);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
-  useMotionValueEvent(scrollY, "change", (latest) => {
-    setIsScrolled(latest > 100);
-  });
+  useEffect(() => {
+    document.body.style.overflow = open ? "hidden" : "";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [open]);
 
-  const navItems = [
-    { label: "Projects", href: "#projects" },
-    { label: "About", href: "#about" },
-    { label: "Schedule", href: "#schedule" },
-    { label: "Curriculum", href: "#curriculum" },
-    { label: "People", href: "#people" },
-    { label: "Contact", href: "#recruit" },
-  ];
+  const cta = recruit.isOpen ? "지원하기" : "모집 안내";
 
   return (
-    <>
-      <motion.nav
-        initial={{ y: -100 }}
-        animate={{ y: 0 }}
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-          isScrolled
-            ? "bg-[#1C1C1C]/95 backdrop-blur-lg border-b border-gray-800 shadow-lg"
-            : "bg-transparent"
-        }`}
-      >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            {/* Logo */}
-            <motion.a
-              href="#"
-              className="flex items-center gap-2"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <div className="w-12 h-12 rounded-xl flex items-center justify-center overflow-hidden">
-                <img src={dankookLogo} alt="단국대학교" className="w-full h-full object-contain" />
-              </div>
-              <div className="hidden sm:block leading-tight">
-                <div className="text-[#0047AB] text-sm font-bold">DANKOOK UNIV</div>
-                <div className="text-[#FF6000] text-sm font-bold -mt-1">LIKELION</div>
-              </div>
-            </motion.a>
+    <header
+      className={`fixed inset-x-0 top-0 z-50 transition-[background-color,border-color] duration-300 ${
+        scrolled || open
+          ? "border-b border-white/[0.06] bg-[#0B0B0B]/85 backdrop-blur-md"
+          : "border-b border-transparent"
+      }`}
+    >
+      <nav className="mx-auto flex h-16 max-w-7xl items-center justify-between px-5 sm:px-8">
+        <a href="#top" className="flex items-center gap-2.5" onClick={() => setOpen(false)}>
+          <img src={dankookLogo} alt="" className="h-8 w-8 rounded-full bg-white object-contain" />
+          <span className="text-[15px] font-bold tracking-tight text-white">
+            LIKELION <span className="font-medium text-white/50">DKU</span>
+          </span>
+        </a>
 
-            {/* Desktop Navigation */}
-            <div className="hidden md:flex items-center gap-8">
-              {navItems.map((item, index) => (
-                <motion.a
-                  key={item.href}
-                  href={item.href}
-                  className="text-gray-300 hover:text-[#FF6000] transition-colors relative group"
-                  initial={{ opacity: 0, y: -20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.1 }}
-                  whileHover={{ scale: 1.05 }}
-                >
-                  {item.label}
-                  <motion.div
-                    className="absolute -bottom-1 left-0 right-0 h-0.5 bg-[#FF6000]"
-                    initial={{ scaleX: 0 }}
-                    whileHover={{ scaleX: 1 }}
-                    transition={{ duration: 0.2 }}
-                  />
-                </motion.a>
-              ))}
-              <motion.a
-                href="#recruit"
-                onClick={(e) => {
-                  e.preventDefault();
-                  showRecruitClosedAlert();
-                }}
-                className="px-6 py-2 bg-[#FF6000] text-white rounded-lg hover:bg-[#ff7a26] transition-colors"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                지원하기
-              </motion.a>
-            </div>
-
-            {/* Mobile Menu Button */}
-            <button
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="md:hidden p-2 text-gray-300 hover:text-[#FF6000] transition-colors"
+        <div className="hidden items-center gap-8 md:flex">
+          {navItems.map((item) => (
+            <a
+              key={item.href}
+              href={item.href}
+              className="text-[15px] text-white/60 transition-colors hover:text-white"
             >
-              {isMobileMenuOpen ? (
-                <X className="w-6 h-6" />
-              ) : (
-                <Menu className="w-6 h-6" />
-              )}
-            </button>
-          </div>
+              {item.label}
+            </a>
+          ))}
+          <a
+            href="#join"
+            className="rounded-lg bg-white px-4 py-2 text-sm font-semibold text-[#0B0B0B] transition-colors hover:bg-[#FF6000] hover:text-white"
+          >
+            {cta}
+          </a>
         </div>
 
-        {/* Mobile Menu */}
-        <motion.div
-          initial={false}
-          animate={{
-            height: isMobileMenuOpen ? "auto" : 0,
-            opacity: isMobileMenuOpen ? 1 : 0,
-          }}
-          transition={{ duration: 0.3 }}
-          className="md:hidden overflow-hidden bg-[#1C1C1C]/98 backdrop-blur-lg border-t border-gray-800"
+        <button
+          type="button"
+          className="-mr-2 p-2 text-white md:hidden"
+          onClick={() => setOpen((v) => !v)}
+          aria-label={open ? "메뉴 닫기" : "메뉴 열기"}
+          aria-expanded={open}
         >
-          <div className="px-4 py-4 space-y-3">
-            {navItems.map((item, index) => (
-              <motion.a
-                key={item.href}
-                href={item.href}
-                className="block px-4 py-2 text-gray-300 hover:text-[#FF6000] hover:bg-[#FF6000]/10 rounded-lg transition-colors"
-                initial={{ opacity: 0, x: -20 }}
-                animate={
-                  isMobileMenuOpen
-                    ? { opacity: 1, x: 0 }
-                    : { opacity: 0, x: -20 }
-                }
-                transition={{ delay: index * 0.05 }}
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                {item.label}
-              </motion.a>
-            ))}
-            <motion.a
-              href="#recruit"
-              className="block px-4 py-2 bg-[#FF6000] text-white text-center rounded-lg hover:bg-[#ff7a26] transition-colors"
-              initial={{ opacity: 0, x: -20 }}
-              animate={
-                isMobileMenuOpen
-                  ? { opacity: 1, x: 0 }
-                  : { opacity: 0, x: -20 }
-              }
-              transition={{ delay: navItems.length * 0.05 }}
-              onClick={(e) => {
-                e.preventDefault();
-                setIsMobileMenuOpen(false);
-                showRecruitClosedAlert();
-              }}
-            >
-              지원하기
-            </motion.a>
-          </div>
-        </motion.div>
-      </motion.nav>
+          {open ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+        </button>
+      </nav>
 
-      {/* Scroll Progress Bar */}
-      <motion.div
-        className="fixed top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#FF6000] to-[#ff7a26] origin-left z-50"
-        style={{
-          scaleX: useScroll().scrollYProgress,
-        }}
-      />
-    </>
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            className="h-[calc(100svh-4rem)] border-t border-white/[0.06] bg-[#0B0B0B] md:hidden"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+          >
+            <div className="flex flex-col px-5 py-6">
+              {[...navItems, { label: cta, href: "#join" }].map((item) => (
+                <a
+                  key={item.href}
+                  href={item.href}
+                  onClick={() => setOpen(false)}
+                  className="border-b border-white/[0.06] py-4 text-2xl font-semibold text-white"
+                >
+                  {item.label}
+                </a>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </header>
   );
 }
