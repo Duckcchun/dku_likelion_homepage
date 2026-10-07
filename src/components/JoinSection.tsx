@@ -143,7 +143,7 @@ export function JoinSection() {
               <p className="flex items-center gap-2 text-sm font-semibold">
                 <span className={`h-2 w-2 rounded-full ${recruit.isOpen ? "bg-emerald-400" : "bg-white/30"}`} />
                 <span className={recruit.isOpen ? "text-emerald-400" : "text-white/60"}>
-                  {recruit.isOpen ? `${generation}기 모집 중` : "지금은 모집 기간이 아닙니다"}
+                  {recruit.isOpen ? `${generation}기 모집 중` : "현재 지원 기간이 아닙니다"}
                 </span>
               </p>
               <p className="mt-4 text-[15px] leading-relaxed text-white/60">

@@ -17,8 +17,14 @@ import { ScrollToTop } from "./components/ScrollToTop";
 export default function App() {
   return (
     <div className="min-h-screen bg-[#0B0B0B] text-white antialiased">
+      <a
+        href="#main"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[200] focus:rounded-lg focus:bg-white focus:px-4 focus:py-2.5 focus:text-sm focus:font-semibold focus:text-[#0B0B0B]"
+      >
+        본문으로 건너뛰기
+      </a>
       <Navigation />
-      <main>
+      <main id="main" tabIndex={-1} className="outline-none">
         <HeroSection />
         <AboutSection />
         <TracksSection />

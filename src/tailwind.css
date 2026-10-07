@@ -129,3 +129,9 @@ body {
     transform: none;
   }
 }
+
+/* 키보드 포커스: 어두운 바탕에서 잘 보이도록 주황 링으로 통일합니다. (자체 링을 가진 요소는 제외) */
+:focus-visible:not([class*="outline-none"]) {
+  outline: 2px solid #ff6000;
+  outline-offset: 3px;
+}

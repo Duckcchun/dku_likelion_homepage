@@ -1,2 +1,4 @@
 User-agent: *
 Allow: /
+
+Sitemap: https://dku-likelion.vercel.app/sitemap.xml

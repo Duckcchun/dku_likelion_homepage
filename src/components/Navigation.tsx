@@ -32,6 +32,18 @@ export function Navigation() {
 
   const cta = recruit.isOpen ? "지원하기" : "모집 안내";
 
+  // 모집 기간이 아닐 때 버튼을 누르면 안내를 잠깐 띄웁니다. (함께하기 섹션으로는 그대로 이동)
+  const [notice, setNotice] = useState(false);
+  useEffect(() => {
+    if (!notice) return;
+    const t = window.setTimeout(() => setNotice(false), 3500);
+    return () => window.clearTimeout(t);
+  }, [notice]);
+  const onCta = () => {
+    setOpen(false);
+    if (!recruit.isOpen) setNotice(true);
+  };
+
   return (
     <header
       className={`fixed inset-x-0 top-0 z-50 transition-[background-color,border-color] duration-300 ${
@@ -60,6 +72,7 @@ export function Navigation() {
           ))}
           <a
             href="#join"
+            onClick={onCta}
             className="press rounded-lg bg-white px-4 py-2 text-sm font-semibold text-[#0B0B0B] hover:bg-[#FF6000] hover:text-white"
           >
             {cta}
@@ -91,7 +104,7 @@ export function Navigation() {
                 <a
                   key={item.href}
                   href={item.href}
-                  onClick={() => setOpen(false)}
+                  onClick={item.href === "#join" ? onCta : () => setOpen(false)}
                   className="border-b border-white/[0.06] py-4 text-2xl font-semibold text-white"
                 >
                   {item.label}
@@ -99,6 +112,21 @@ export function Navigation() {
               ))}
             </div>
           </motion.div>
+        )}
+      </AnimatePresence>
+      <AnimatePresence>
+        {notice && (
+          <motion.p
+            role="status"
+            className="fixed inset-x-4 bottom-6 z-[60] mx-auto w-fit max-w-[calc(100vw-2rem)] rounded-xl bg-[#161616] px-5 py-3.5 text-center text-sm text-white/80 ring-1 ring-inset ring-white/15"
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 4 }}
+            transition={{ duration: 0.2, ease: [0.23, 1, 0.32, 1] }}
+          >
+            <strong className="font-semibold text-white">현재 지원 기간이 아닙니다.</strong> 다음 모집 소식은
+            인스타그램에서 알려 드려요.
+          </motion.p>
         )}
       </AnimatePresence>
     </header>

@@ -4,15 +4,10 @@
       "private": true,
       "dependencies": {
             "@emailjs/browser": "^4.4.1",
-            "@radix-ui/react-slot": "^1.1.2",
-            "class-variance-authority": "^0.7.1",
-            "clsx": "*",
-            "gsap": "^3.14.2",
             "lucide-react": "^0.487.0",
             "motion": "*",
             "react": "^18.3.1",
-            "react-dom": "^18.3.1",
-            "tailwind-merge": "*"
+            "react-dom": "^18.3.1"
       },
       "devDependencies": {
             "@tailwindcss/vite": "^4.3.3",
