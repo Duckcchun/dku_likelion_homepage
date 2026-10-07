@@ -22,7 +22,7 @@ export function TracksSection() {
           {tracks.map((t, i) => (
             <Reveal key={t.id} delay={i * 0.06} className="flex flex-col bg-[#0F0F0F] p-7">
               <div className="flex items-baseline justify-between">
-                <h3 className="text-2xl font-bold text-white">{t.title}</h3>
+                <h3 className="font-display text-[1.625rem] font-bold tracking-[-0.01em] text-white">{t.title}</h3>
                 <span className="text-sm text-white/50">{t.ko}</span>
               </div>
               <p className="mt-4 min-h-[3.2em] text-[15px] leading-relaxed text-white/60">{t.description}</p>

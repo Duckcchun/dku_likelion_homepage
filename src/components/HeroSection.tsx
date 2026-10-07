@@ -174,7 +174,7 @@ export function HeroSection() {
 
         <div className="relative z-20 mx-auto flex w-full max-w-5xl flex-1 flex-col items-center justify-center px-5 pb-[27svh] pt-20 text-center">
           <motion.p
-            className="text-xs font-semibold tracking-[0.24em] text-[#FF6000] md:text-sm"
+            className="font-display text-xs font-semibold tracking-[0.24em] text-[#FF6000] md:text-sm"
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, ease: EASE }}

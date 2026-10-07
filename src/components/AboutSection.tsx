@@ -91,7 +91,7 @@ export function AboutSection() {
         <Reveal className="mt-16 grid grid-cols-2 gap-y-10 border-t border-white/[0.08] pt-10 md:grid-cols-4">
           {stats.map((s) => (
             <div key={s.label}>
-              <p className="text-4xl font-bold tracking-tight text-white tabular-nums md:text-5xl">{s.value}</p>
+              <p className="font-display text-4xl font-bold tracking-tight text-white tabular-nums md:text-6xl">{s.value}</p>
               <p className="mt-2 text-sm text-white/50">{s.label}</p>
             </div>
           ))}

@@ -43,7 +43,7 @@ export function Navigation() {
       <nav className="mx-auto flex h-16 max-w-7xl items-center justify-between px-5 sm:px-8">
         <a href="#top" className="flex items-center gap-2.5" onClick={() => setOpen(false)}>
           <img src={dankookLogo} alt="" width={32} height={32} className="h-8 w-8 rounded-full bg-white object-contain" />
-          <span className="text-[15px] font-bold tracking-tight text-white">
+          <span className="font-display text-base font-bold tracking-tight text-white">
             LIKELION <span className="font-medium text-bear-light">DKU</span>
           </span>
         </a>

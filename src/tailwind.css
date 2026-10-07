@@ -12,7 +12,22 @@
  * 오렌지 = 행동(버튼·링크·강조), 블루 = 소속(단국대·운영진·푸터).
  * bear-light는 어두운 바탕 위 글자용입니다. (bear 원색은 글자로 쓰면 대비가 부족합니다)
  */
+/*
+ * 영문·숫자 제목용 서체. 글자 범위를 A–Z, a–z, 0–9, &, - 로만 제한해서
+ * font-display를 붙인 제목 안의 한글·문장부호는 그대로 Pretendard로 나옵니다.
+ */
+@font-face {
+  font-family: "Bricolage Grotesque";
+  font-style: normal;
+  font-weight: 200 800;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("./assets/fonts/bricolage-grotesque-latin.woff2") format("woff2");
+  unicode-range: U+0026, U+002D, U+0030-0039, U+0041-005A, U+0061-007A;
+}
+
 @theme {
+  --font-display: "Bricolage Grotesque", "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
   --color-lion: #ff6000;
   --color-bear: #0a559c;
   --color-bear-light: #7db3ea;

@@ -93,15 +93,15 @@
     "typographyMeta": {
       "display": {
         "displayName": "Display",
-        "purpose": "히어로 제목 한 곳에만."
+        "purpose": "히어로 제목 한 곳에만. 영문·숫자는 Bricolage Grotesque."
       },
       "headline": {
         "displayName": "Headline",
-        "purpose": "섹션 제목. 두 줄로 끊어 쓴다."
+        "purpose": "섹션 제목. 두 줄로 끊어 쓴다. 영문·숫자는 Bricolage Grotesque."
       },
       "title": {
         "displayName": "Title",
-        "purpose": "카드·트랙·프로젝트·운영진 이름."
+        "purpose": "카드·트랙·프로젝트 이름. 영문·숫자는 Bricolage Grotesque."
       },
       "body": {
         "displayName": "Body",
@@ -225,6 +225,11 @@
       "한 번만 떠오르는 조용한 등장 모션"
     ],
     "rules": [
+      {
+        "name": "영문과 숫자만 갈아입는다",
+        "body": "`font-display`는 A–Z, a–z, 0–9, &, - 에만 적용되도록 글꼴 범위를 제한했다. 한글과 문장부호는 언제나 Pretendard다. 본문·라벨·버튼에는 `font-display`를 쓰지 않는다.",
+        "section": "typography"
+      },
       {
         "name": "사자는 행동, 곰은 소속",
         "body": "오렌지는 \"여기를 누르세요\"와 \"이것이 결과물입니다\"를 말한다. 블루는 \"우리는 단국대학교에 있습니다\"를 말한다. 블루 버튼이나 오렌지 소속 표기는 만들지 않는다.",

@@ -68,7 +68,7 @@ function ProductCard({
 
         <span className="mt-5 flex flex-1 flex-col">
           <span className="text-xs font-medium uppercase tracking-[0.14em] text-white/50">{product.category}</span>
-          <h4 className={`mt-2 font-bold text-white ${large ? "text-2xl md:text-[1.75rem]" : "text-xl md:text-2xl"}`}>
+          <h4 className={`mt-2 font-display font-bold tracking-[-0.01em] text-white ${large ? "text-2xl md:text-[1.75rem]" : "text-xl md:text-2xl"}`}>
             {product.name}
           </h4>
           <span className="mt-2 text-[15px] font-medium leading-snug text-white/80">{product.tagline}</span>
@@ -165,7 +165,7 @@ function ProjectDetail({ product, onClose }: { product: Product | null; onClose:
               </p>
               <h3
                 id="project-detail-title"
-                className="mt-4 text-4xl font-bold leading-[1.15] tracking-[-0.02em] text-white md:text-5xl"
+                className="mt-4 font-display text-4xl font-bold leading-[1.15] tracking-[-0.02em] text-white md:text-5xl"
               >
                 {product.name}
               </h3>
@@ -231,7 +231,7 @@ function GroupBlock({ group, onOpen }: { group: ProductGroup; onOpen: (p: Produc
     <div id={group.id} className="scroll-mt-24">
       <Reveal className="mb-10 flex flex-col gap-3 border-t border-white/[0.1] pt-8 md:flex-row md:items-baseline md:justify-between">
         <div className="flex items-baseline gap-4">
-          <h3 className="text-2xl font-bold text-white md:text-3xl">{group.label}</h3>
+          <h3 className="font-display text-2xl font-bold text-white md:text-3xl">{group.label}</h3>
           <span className="text-sm tabular-nums text-white/50">
             {group.year} · {group.products.length}개
           </span>

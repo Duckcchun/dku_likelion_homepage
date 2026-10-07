@@ -6,7 +6,7 @@ export function Footer() {
     <footer className="border-t border-white/[0.06] bg-[#0B0B0B] py-12">
       <div className="mx-auto flex max-w-7xl flex-col gap-8 px-5 sm:px-8 md:flex-row md:items-center md:justify-between">
         <div>
-          <p className="text-[15px] font-bold text-white">
+          <p className="font-display text-base font-bold text-white">
             LIKELION <span className="font-medium text-bear-light">DANKOOK UNIV.</span>
           </p>
           <p className="mt-2 text-sm text-white/50">

@@ -52,14 +52,23 @@ export function SectionHeader({
   aside?: ReactNode;
 }) {
   return (
-    <Reveal className="mb-14 md:mb-20">
-      <div className="flex items-center gap-3 text-sm font-medium">
-        <span className="tabular-nums text-[#FF6000]">{index}</span>
-        <span className="h-px w-8 bg-white/20" />
-        <span className="tracking-wide text-white/50">{label}</span>
+    <Reveal className="relative mb-14 md:mb-20">
+      {/* 잡지의 쪽 번호처럼 섹션 번호를 배경에 크게 깝니다. */}
+      <span
+        aria-hidden
+        className="pointer-events-none absolute -top-14 right-0 select-none font-display text-[9.5rem] font-extrabold leading-none tracking-[-0.04em] text-white/[0.045] md:-top-24 md:text-[19rem]"
+      >
+        {index}
+      </span>
+      <div className="relative flex items-center gap-3 text-sm font-medium">
+        <span className="h-px w-8 bg-[#FF6000]" />
+        <span className="tracking-wide text-white/60">
+          <span className="sr-only">{index}. </span>
+          {label}
+        </span>
       </div>
-      <div className="mt-6 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-        <h2 className="max-w-3xl text-[2.25rem] font-bold leading-[1.15] tracking-[-0.02em] text-white md:text-[3.5rem]">
+      <div className="relative mt-6 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+        <h2 className="max-w-3xl font-display text-[2.25rem] font-bold leading-[1.15] tracking-[-0.02em] text-white md:text-[3.5rem]">
           {title}
         </h2>
         {(description || aside) && (

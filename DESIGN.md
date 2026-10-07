@@ -15,19 +15,19 @@ colors:
   error: "#F87171"
 typography:
   display:
-    fontFamily: "Pretendard Variable, Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Apple SD Gothic Neo, Noto Sans KR, sans-serif"
+    fontFamily: "Bricolage Grotesque, Pretendard Variable, Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Apple SD Gothic Neo, Noto Sans KR, sans-serif"
     fontSize: "clamp(2.35rem, 6vw, 5.5rem)"
     fontWeight: 700
     lineHeight: 1.1
     letterSpacing: "-0.03em"
   headline:
-    fontFamily: "Pretendard Variable, Pretendard, sans-serif"
+    fontFamily: "Bricolage Grotesque, Pretendard Variable, Pretendard, sans-serif"
     fontSize: "clamp(2.25rem, 4vw, 3.5rem)"
     fontWeight: 700
     lineHeight: 1.15
     letterSpacing: "-0.02em"
   title:
-    fontFamily: "Pretendard Variable, Pretendard, sans-serif"
+    fontFamily: "Bricolage Grotesque, Pretendard Variable, Pretendard, sans-serif"
     fontSize: "1.5rem"
     fontWeight: 700
     lineHeight: 1.3
@@ -149,9 +149,10 @@ components:
 
 ## Typography
 
-**Display / Body Font:** Pretendard Variable (대체: Apple SD Gothic Neo, Noto Sans KR, system-ui)
+**Display Font:** Bricolage Grotesque (영문·숫자 전용, 직접 호스팅) + Pretendard Variable
+**Body Font:** Pretendard Variable (대체: Apple SD Gothic Neo, Noto Sans KR, system-ui)
 
-**Character:** 한 서체로 굵기와 크기만 바꿔 쓴다. 제목은 굵고 촘촘하게 당기고, 본문은 가늘고 넉넉하게 푼다. `word-break: keep-all`로 한국어 단어가 중간에 끊기지 않는다.
+**Character:** 한글은 Pretendard 하나로 굵기와 크기만 바꿔 쓴다. 제목 안의 영문과 숫자만 Bricolage Grotesque로 바뀐다(`font-display`). 잉크 트랩과 살짝 비뚠 곡선이 있는 서체라, CATCHCUT·TOMO 같은 서비스 이름과 큰 숫자에서 손으로 만든 느낌을 준다. 제목은 굵고 촘촘하게 당기고, 본문은 가늘고 넉넉하게 푼다. `word-break: keep-all`로 한국어 단어가 중간에 끊기지 않는다.
 
 ### Hierarchy
 - **Display** (700, 2.35rem → 5.5rem, 1.1, -0.03em): 히어로 제목 한 곳에만.
@@ -161,14 +162,18 @@ components:
 - **Label** (500, 14px): 섹션 번호와 라벨, 날짜, 역할, 메타 정보. 숫자는 `tabular-nums`.
 - **Kicker** (600, 12–14px, 0.24em, 대문자): 히어로의 `LIKELION · DANKOOK UNIV.` 한 곳. 프로젝트 분야 태그는 0.14em.
 
+- **Section Numeral** (Bricolage 800, 9.5rem → 19rem, -0.04em, 흰색 4.5%): 섹션 머리말 오른쪽 위 배경에 깔리는 01–06. 잡지의 쪽 번호 역할.
+
 ### Named Rules
+**영문과 숫자만 갈아입는다.** `font-display`는 A–Z, a–z, 0–9, &, - 에만 적용되도록 글꼴 범위를 제한했다. 한글과 문장부호는 언제나 Pretendard다. 본문·라벨·버튼에는 `font-display`를 쓰지 않는다.
+
 **굵기는 둘.** 제목은 700, 본문은 400. 그 사이(500·600)는 라벨과 버튼에만 쓴다.
 
 ## Layout
 
 최대 폭 80rem(`max-w-7xl`) 컨테이너에 좌우 여백 20px(모바일) / 32px(640px 이상). 섹션은 위아래 112px / 144px로 넉넉히 떨어지고, 섹션 머리말 아래는 56px / 80px.
 
-모든 섹션은 같은 머리말로 시작한다: 번호와 라벨 → 큰 제목(왼쪽) → 설명(데스크톱에서는 오른쪽 아래 정렬). 페이지 순서는 소개 → 트랙 → 1년의 흐름 → 프로젝트 → 사람들 → 함께하기로 고정이며, 번호가 그 순서를 싣는다.
+모든 섹션은 같은 머리말로 시작한다: 오렌지 선과 라벨 → 큰 제목(왼쪽) → 설명(데스크톱에서는 오른쪽 아래 정렬). 섹션 번호는 머리말 배경에 아주 크고 옅게 깔린다. 페이지 순서는 소개 → 트랙 → 1년의 흐름 → 프로젝트 → 사람들 → 함께하기로 고정이며, 번호가 그 순서를 싣는다.
 
 그리드는 내용에 따라 달라진다. 가치 3열과 트랙 4열은 **1px 틈 그리드**(틈 사이로 흰색 8% 바탕이 비쳐 선이 된다), 프로젝트는 6열 위에서 개수에 따라 절반/3분의 1 폭, 운영진은 2열 → 4열, 타임라인은 모바일 세로선 → 데스크톱 6열 가로선.
 
