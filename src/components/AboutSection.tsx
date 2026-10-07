@@ -59,8 +59,8 @@ export function AboutSection() {
                 사자의 갈기를 쓴 곰
               </h3>
               <p className="mt-4 text-pretty text-[15px] leading-relaxed text-white/85 md:text-base">
-                멋쟁이사자처럼의 사자와 단국대학교의 곰이 만나 우리 대학의 얼굴이 되었습니다. 이 사이트의 오렌지는
-                사자에게서, 블루는 곰에게서 왔습니다.
+                멋쟁이사자처럼의 사자와 단국대학교의 곰이 만나 우리 대학의 얼굴이 되었습니다.
+                <br className="hidden md:block" /> 이 사이트의 오렌지는 사자에게서, 블루는 곰에게서 왔습니다.
               </p>
               <dl className="mt-7 flex flex-wrap gap-x-8 gap-y-3 text-sm">
                 <div className="flex items-center gap-2.5">
