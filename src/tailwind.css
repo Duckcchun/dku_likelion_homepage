@@ -1,0 +1,8 @@
+/*
+ * 기존 src/index.css는 Figma에서 내보낸 '미리 컴파일된' Tailwind라서
+ * 새로 쓰는 클래스가 들어 있지 않습니다. 이 파일이 src 전체를 스캔해
+ * 실제로 쓰는 유틸리티를 빌드 때마다 생성합니다. (preflight 제외)
+ */
+@import "tailwindcss/theme" layer(theme);
+@import "tailwindcss/utilities" layer(utilities);
+@source "./";

@@ -41,16 +41,6 @@ export function ScrollToTop() {
           <ArrowUp className="w-6 h-6" />
         </motion.div>
       </motion.button>
-
-      {/* 모바일 하단 고정 네비게이션 팁 */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={isVisible ? { opacity: 0, y: 20 } : { opacity: 1, y: 0 }}
-        transition={{ duration: 0.3 }}
-        className="fixed bottom-20 right-8 md:hidden z-40 bg-[#1C1C1C] border border-gray-800 rounded-lg p-3 text-xs text-gray-300 pointer-events-none"
-      >
-        위로 스크롤 ↑
-      </motion.div>
     </>
   );
 }

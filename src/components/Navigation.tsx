@@ -17,6 +17,7 @@ export function Navigation() {
   });
 
   const navItems = [
+    { label: "Projects", href: "#projects" },
     { label: "About", href: "#about" },
     { label: "Schedule", href: "#schedule" },
     { label: "Curriculum", href: "#curriculum" },

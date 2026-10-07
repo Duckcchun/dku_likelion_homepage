@@ -1,5 +1,6 @@
 import { HeroSection } from "./components/HeroSection";
 import { AboutSection } from "./components/AboutSection";
+import { ProjectsSection } from "./components/ProjectsSection";
 import { CurriculumSection } from "./components/CurriculumSection";
 import { ScheduleSection } from "./components/ScheduleSection";
 import { PeopleSection } from "./components/PeopleSection";
@@ -24,6 +25,7 @@ export default function App() {
           <div className="bg-[#1C1C1C] min-h-screen">
             <Navigation />
             <HeroSection />
+            <ProjectsSection />
             <AboutSection />
             <ScheduleSection />
             <CurriculumSection />
