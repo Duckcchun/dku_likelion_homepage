@@ -1,7 +1,37 @@
 import { allProducts, productGroups } from "../data/products";
 import { generation, members, tracks } from "../data/site";
 import emblem from "../assets/emblem-lion-bear.webp";
+import { animate, useInView, useReducedMotion } from "motion/react";
+import { useEffect, useRef } from "react";
 import { Container, Reveal, SectionHeader } from "./layout";
+
+/** 화면에 들어올 때 0에서 목표 숫자까지 한 번 올라갑니다. */
+function CountUp({ to, suffix = "" }: { to: number; suffix?: string }) {
+  const ref = useRef<HTMLSpanElement>(null);
+  const inView = useInView(ref, { once: true, amount: 0.6 });
+  const reduce = useReducedMotion();
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || !inView || reduce) return;
+    const controls = animate(0, to, {
+      // 숫자가 작아서 천천히 올라가야 세는 느낌이 납니다.
+      duration: 2,
+      ease: [0.33, 1, 0.68, 1],
+      onUpdate: (v) => {
+        el.textContent = `${Math.round(v)}`;
+      },
+    });
+    return () => controls.stop();
+  }, [inView, reduce, to]);
+
+  return (
+    <>
+      <span ref={ref}>{to}</span>
+      {suffix}
+    </>
+  );
+}
 
 const values = [
   {
@@ -19,11 +49,11 @@ const values = [
 ];
 
 export function AboutSection() {
-  const stats = [
-    { value: `${generation}기`, label: "올해 기수" },
-    { value: `${tracks.length}`, label: "트랙" },
-    { value: `${allProducts.length}`, label: `${productGroups[0]?.year} 완성한 서비스` },
-    { value: `${members.length}`, label: "운영진" },
+  const stats: { value: number; suffix?: string; label: string }[] = [
+    { value: generation, suffix: "기", label: "올해 기수" },
+    { value: tracks.length, label: "트랙" },
+    { value: allProducts.length, label: `${productGroups[0]?.year} 완성한 서비스` },
+    { value: members.length, label: "운영진" },
   ];
 
   return (
@@ -91,7 +121,9 @@ export function AboutSection() {
         <Reveal className="mt-16 grid grid-cols-2 gap-y-10 border-t border-white/[0.08] pt-10 md:grid-cols-4">
           {stats.map((s) => (
             <div key={s.label}>
-              <p className="font-display text-4xl font-bold tracking-tight text-white tabular-nums md:text-6xl">{s.value}</p>
+              <p className="font-display text-4xl font-bold tracking-tight text-white tabular-nums md:text-6xl">
+                <CountUp to={s.value} suffix={s.suffix} />
+              </p>
               <p className="mt-2 text-sm text-white/50">{s.label}</p>
             </div>
           ))}

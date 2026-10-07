@@ -111,7 +111,7 @@ function InquiryForm() {
       <button
         type="submit"
         disabled={submitting}
-        className="w-full rounded-lg bg-white py-3.5 text-[15px] font-semibold text-[#0B0B0B] transition-colors hover:bg-[#FF6000] hover:text-white disabled:opacity-50 sm:w-auto sm:px-8"
+        className="w-full rounded-lg bg-white py-3.5 text-[15px] font-semibold text-[#0B0B0B] press hover:bg-[#FF6000] hover:text-white disabled:opacity-50 sm:w-auto sm:px-8"
       >
         {submitting ? "보내는 중…" : "문의 보내기"}
       </button>
@@ -156,7 +156,7 @@ export function JoinSection() {
                 href={recruit.isOpen ? recruit.applyUrl : contact.instagram.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="mt-6 inline-flex items-center gap-1.5 rounded-lg bg-[#FF6000] px-5 py-3 text-[15px] font-semibold text-white transition-colors hover:bg-[#ff7420]"
+                className="mt-6 inline-flex items-center gap-1.5 rounded-lg bg-[#FF6000] px-5 py-3 text-[15px] font-semibold text-white press hover:bg-[#ff7420]"
               >
                 {recruit.isOpen ? "지원서 작성하기" : "인스타그램에서 소식 받기"}
                 <ArrowUpRight className="h-4 w-4" />

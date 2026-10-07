@@ -53,14 +53,14 @@ export function Navigation() {
             <a
               key={item.href}
               href={item.href}
-              className="text-[15px] text-white/60 transition-colors hover:text-white"
+              className="text-[15px] text-white/60 transition-colors duration-150 hover:text-white"
             >
               {item.label}
             </a>
           ))}
           <a
             href="#join"
-            className="rounded-lg bg-white px-4 py-2 text-sm font-semibold text-[#0B0B0B] transition-colors hover:bg-[#FF6000] hover:text-white"
+            className="press rounded-lg bg-white px-4 py-2 text-sm font-semibold text-[#0B0B0B] hover:bg-[#FF6000] hover:text-white"
           >
             {cta}
           </a>

@@ -82,3 +82,50 @@ body {
     animation: none;
   }
 }
+
+/*
+ * 인터랙션 공통 규칙
+ * - press: 누를 수 있는 것은 누르면 살짝(0.97) 눌립니다. 버튼·칩·아이콘 버튼에 붙입니다.
+ * - link-line: 글자 링크는 마우스를 올리면 밑줄이 왼쪽에서 그어집니다.
+ */
+:root {
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+}
+.press {
+  transition:
+    transform 160ms var(--ease-out),
+    background-color 160ms ease,
+    color 160ms ease,
+    box-shadow 160ms ease;
+}
+.press:active {
+  transform: scale(0.97);
+}
+.link-line {
+  padding-bottom: 2px;
+  background-image: linear-gradient(currentColor, currentColor);
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  background-size: 0% 1px;
+  transition:
+    background-size 220ms var(--ease-out),
+    color 160ms ease;
+}
+.link-line:focus-visible {
+  background-size: 100% 1px;
+}
+@media (hover: hover) and (pointer: fine) {
+  .link-line:hover,
+  .group:hover .link-line {
+    background-size: 100% 1px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .press,
+  .link-line {
+    transition-duration: 0.01ms;
+  }
+  .press:active {
+    transform: none;
+  }
+}

@@ -3,7 +3,7 @@ import { generation, members } from "../data/site";
 import { Container, Reveal, SectionHeader } from "./layout";
 
 const linkClass =
-  "flex h-8 w-8 items-center justify-center rounded-full text-white/50 ring-1 ring-inset ring-white/10 transition-colors hover:bg-white hover:text-[#0B0B0B]";
+  "flex h-8 w-8 items-center justify-center rounded-full text-white/50 ring-1 ring-inset ring-white/10 press hover:bg-white hover:text-[#0B0B0B]";
 
 export function PeopleSection() {
   return (

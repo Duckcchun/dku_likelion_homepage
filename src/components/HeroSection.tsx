@@ -215,13 +215,13 @@ export function HeroSection() {
           >
             <a
               href="#about"
-              className="w-full rounded-xl bg-[#FF6000] px-7 py-3.5 text-base font-semibold text-white transition-[background-color,transform] duration-200 hover:bg-[#ff7420] active:scale-[0.98] sm:w-auto"
+              className="w-full rounded-xl bg-[#FF6000] px-7 py-3.5 text-base font-semibold text-white press hover:bg-[#ff7420] sm:w-auto"
             >
               우리를 소개합니다
             </a>
             <a
               href="#projects"
-              className="w-full rounded-xl bg-[#0B0B0B]/70 px-7 py-3.5 text-base font-semibold text-white ring-1 ring-inset ring-white/20 transition-[background-color,transform] duration-200 hover:bg-[#1c1c1c] active:scale-[0.98] sm:w-auto"
+              className="w-full rounded-xl bg-[#0B0B0B]/70 px-7 py-3.5 text-base font-semibold text-white ring-1 ring-inset ring-white/20 press hover:bg-[#1c1c1c] sm:w-auto"
             >
               만든 것들 보기
             </a>
@@ -260,7 +260,7 @@ export function HeroSection() {
           )}
           <motion.a
             href="#projects"
-            className="inline-flex items-center gap-1 font-medium text-white/70 transition-colors hover:text-[#FF6000]"
+            className="link-line inline-flex items-center gap-1 font-medium text-white/70 hover:text-white"
             style={{ opacity: captionOpacity, pointerEvents: captionEvents }}
           >
             전체 보기 <ArrowDown className="h-4 w-4" />

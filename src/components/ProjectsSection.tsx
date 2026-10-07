@@ -73,7 +73,7 @@ function ProductCard({
           </h4>
           <span className="mt-2 text-[15px] font-medium leading-snug text-white/80">{product.tagline}</span>
           <span className="mt-3 text-sm leading-relaxed text-white/50">{product.description}</span>
-          <span className="mt-5 inline-flex w-fit items-center gap-1.5 text-sm font-semibold text-white/70 underline-offset-4 transition-colors group-hover:text-white group-hover:underline">
+          <span className="link-line mt-5 inline-flex w-fit items-center gap-1.5 text-sm font-semibold text-white/70 group-hover:text-white">
             자세히 보기
           </span>
         </span>
@@ -202,7 +202,7 @@ function ProjectDetail({ product, onClose }: { product: Product | null; onClose:
                   href={product.link}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="mt-8 inline-flex items-center gap-1.5 rounded-xl bg-[#FF6000] px-6 py-3.5 text-[15px] font-semibold text-white transition-[background-color,transform] duration-200 hover:bg-[#ff7420] active:scale-[0.98]"
+                  className="mt-8 inline-flex items-center gap-1.5 rounded-xl bg-[#FF6000] px-6 py-3.5 text-[15px] font-semibold text-white press hover:bg-[#ff7420]"
                 >
                   서비스 보러 가기
                   <ArrowUpRight className="h-4 w-4" />
@@ -216,7 +216,7 @@ function ProjectDetail({ product, onClose }: { product: Product | null; onClose:
             type="button"
             onClick={onClose}
             aria-label="닫기"
-            className="fixed right-4 top-4 flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-white transition-colors hover:bg-white/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF6000]"
+            className="fixed right-4 top-4 flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-white press hover:bg-white/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF6000]"
           >
             <X className="h-5 w-5" />
           </button>
@@ -295,7 +295,7 @@ export function ProjectsSection() {
                 <a
                   key={g.id}
                   href={`#${g.id}`}
-                  className="rounded-full px-3.5 py-1.5 text-sm font-medium text-white/80 ring-1 ring-inset ring-white/15 transition-colors hover:bg-white hover:text-[#0B0B0B]"
+                  className="rounded-full px-3.5 py-1.5 text-sm font-medium text-white/80 ring-1 ring-inset ring-white/15 press hover:bg-white hover:text-[#0B0B0B]"
                 >
                   {g.label} <span className="tabular-nums text-white/50">{g.products.length}</span>
                 </a>

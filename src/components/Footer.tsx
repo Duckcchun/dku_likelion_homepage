@@ -19,7 +19,7 @@ export function Footer() {
             target="_blank"
             rel="noopener noreferrer"
             aria-label="인스타그램"
-            className="flex h-10 w-10 items-center justify-center rounded-full text-white/60 ring-1 ring-inset ring-white/10 transition-colors hover:bg-white hover:text-[#0B0B0B]"
+            className="flex h-10 w-10 items-center justify-center rounded-full text-white/60 ring-1 ring-inset ring-white/10 press hover:bg-white hover:text-[#0B0B0B]"
           >
             <Instagram className="h-4 w-4" />
           </a>
@@ -28,7 +28,7 @@ export function Footer() {
             target="_blank"
             rel="noopener noreferrer"
             aria-label="GitHub"
-            className="flex h-10 w-10 items-center justify-center rounded-full text-white/60 ring-1 ring-inset ring-white/10 transition-colors hover:bg-white hover:text-[#0B0B0B]"
+            className="flex h-10 w-10 items-center justify-center rounded-full text-white/60 ring-1 ring-inset ring-white/10 press hover:bg-white hover:text-[#0B0B0B]"
           >
             <Github className="h-4 w-4" />
           </a>
