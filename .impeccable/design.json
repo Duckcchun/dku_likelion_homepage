@@ -1,0 +1,268 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-07T03:10:58+00:00",
+  "title": "Design System: 멋쟁이사자처럼 단국대학교",
+  "extensions": {
+    "colorMeta": {
+      "lion-orange": {
+        "role": "primary",
+        "displayName": "사자 오렌지",
+        "canonical": "#FF6000",
+        "tonalRamp": [
+          "#3d1700",
+          "#662600",
+          "#993a00",
+          "#cc4d00",
+          "#ff6000",
+          "#ff8a42",
+          "#ffb588",
+          "#ffe1cf"
+        ]
+      },
+      "lion-orange-hover": {
+        "role": "primary",
+        "displayName": "사자 오렌지 호버",
+        "canonical": "#FF7420"
+      },
+      "bear-blue": {
+        "role": "secondary",
+        "displayName": "곰 블루",
+        "canonical": "#0A559C",
+        "tonalRamp": [
+          "#041f3a",
+          "#07355f",
+          "#0a559c",
+          "#1f6fbd",
+          "#4a90d6",
+          "#7db3ea",
+          "#b3d3f3",
+          "#e3effb"
+        ]
+      },
+      "bear-blue-light": {
+        "role": "secondary",
+        "displayName": "곰 블루 라이트",
+        "canonical": "#7DB3EA"
+      },
+      "dawn-black": {
+        "role": "neutral",
+        "displayName": "새벽 검정",
+        "canonical": "#0B0B0B",
+        "tonalRamp": [
+          "#0b0b0b",
+          "#0f0f0f",
+          "#161616",
+          "#262626",
+          "#4d4d4d",
+          "#808080",
+          "#b3b3b3",
+          "#f2f2f2"
+        ]
+      },
+      "desk-black": {
+        "role": "neutral",
+        "displayName": "책상 검정",
+        "canonical": "#0F0F0F"
+      },
+      "monitor-off": {
+        "role": "neutral",
+        "displayName": "꺼진 모니터",
+        "canonical": "#161616"
+      },
+      "overlay-black": {
+        "role": "neutral",
+        "displayName": "오버레이 검정",
+        "canonical": "#0A0A0A"
+      },
+      "paper-white": {
+        "role": "neutral",
+        "displayName": "종이 흰색",
+        "canonical": "#FFFFFF"
+      },
+      "success": {
+        "role": "neutral",
+        "displayName": "성공",
+        "canonical": "#34D399"
+      },
+      "error": {
+        "role": "neutral",
+        "displayName": "오류",
+        "canonical": "#F87171"
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "히어로 제목 한 곳에만."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "섹션 제목. 두 줄로 끊어 쓴다."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "카드·트랙·프로젝트·운영진 이름."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "설명문. 최대 폭 약 28rem."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "섹션 번호와 라벨, 날짜, 역할, 메타 정보."
+      }
+    },
+    "shadows": [],
+    "motion": [
+      {
+        "name": "ease-out-expo",
+        "value": "cubic-bezier(0.22, 1, 0.36, 1)",
+        "purpose": "모든 등장과 라이트박스 전환의 곡선."
+      },
+      {
+        "name": "reveal",
+        "value": "0.6s, y 20px → 0, once",
+        "purpose": "스크롤 등장. 항목 간 0.05–0.06초 간격."
+      },
+      {
+        "name": "strip-loop",
+        "value": "60s linear infinite",
+        "purpose": "히어로 하단 결과물 띠."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "sm",
+        "value": "640px"
+      },
+      {
+        "name": "md",
+        "value": "768px"
+      },
+      {
+        "name": "lg",
+        "value": "1024px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "주 버튼",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "가장 중요한 행동 하나. 히어로와 모집 카드.",
+      "html": "<a class=\"ds-btn-primary\" href=\"#\">우리를 소개합니다</a>",
+      "css": ".ds-btn-primary{font-family:\"Pretendard Variable\",Pretendard,system-ui,sans-serif;display:inline-block;background:#FF6000;color:#fff;padding:14px 28px;border-radius:12px;font-size:16px;font-weight:600;text-decoration:none;transition:background-color .2s,transform .2s}.ds-btn-primary:hover{background:#FF7420}.ds-btn-primary:active{transform:scale(.98)}.ds-btn-primary:focus-visible{outline:2px solid #fff;outline-offset:2px}"
+    },
+    {
+      "name": "외곽 버튼",
+      "kind": "button",
+      "refersTo": "button-outline",
+      "description": "주 버튼 옆의 두 번째 행동.",
+      "html": "<a class=\"ds-btn-outline\" href=\"#\">만든 것들 보기</a>",
+      "css": ".ds-btn-outline{font-family:\"Pretendard Variable\",Pretendard,system-ui,sans-serif;display:inline-block;background:transparent;color:#fff;padding:14px 28px;border-radius:12px;font-size:16px;font-weight:600;text-decoration:none;box-shadow:inset 0 0 0 1px rgba(255,255,255,.2);transition:background-color .2s,transform .2s}.ds-btn-outline:hover{background:rgba(255,255,255,.05)}.ds-btn-outline:active{transform:scale(.98)}.ds-btn-outline:focus-visible{outline:2px solid #FF6000;outline-offset:2px}"
+    },
+    {
+      "name": "밝은 버튼",
+      "kind": "button",
+      "refersTo": "button-light",
+      "description": "내비 CTA와 문의 보내기. 호버 시 오렌지로 뒤집힌다.",
+      "html": "<a class=\"ds-btn-light\" href=\"#\">모집 안내</a>",
+      "css": ".ds-btn-light{font-family:\"Pretendard Variable\",Pretendard,system-ui,sans-serif;display:inline-block;background:#fff;color:#0B0B0B;padding:8px 16px;border-radius:8px;font-size:14px;font-weight:600;text-decoration:none;transition:background-color .15s,color .15s}.ds-btn-light:hover{background:#FF6000;color:#fff}.ds-btn-light:focus-visible{outline:2px solid #FF6000;outline-offset:2px}"
+    },
+    {
+      "name": "칩",
+      "kind": "chip",
+      "refersTo": "chip",
+      "description": "프로젝트 섹션의 행사 바로가기.",
+      "html": "<a class=\"ds-chip\" href=\"#\">아이디어톤 <span>5</span></a>",
+      "css": ".ds-chip{font-family:\"Pretendard Variable\",Pretendard,system-ui,sans-serif;display:inline-block;padding:6px 14px;border-radius:9999px;color:rgba(255,255,255,.8);font-size:14px;font-weight:500;text-decoration:none;box-shadow:inset 0 0 0 1px rgba(255,255,255,.15);transition:background-color .15s,color .15s}.ds-chip span{color:rgba(255,255,255,.4);font-variant-numeric:tabular-nums}.ds-chip:hover{background:#fff;color:#0B0B0B}.ds-chip:hover span{color:rgba(11,11,11,.5)}"
+    },
+    {
+      "name": "입력창",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "문의 폼의 입력 필드.",
+      "html": "<label class=\"ds-field\"><span>이름</span><input class=\"ds-input\" placeholder=\"홍길동\"></label>",
+      "css": ".ds-field{font-family:\"Pretendard Variable\",Pretendard,system-ui,sans-serif;display:block;width:260px}.ds-field span{display:block;margin-bottom:8px;font-size:14px;color:rgba(255,255,255,.6)}.ds-input{font-family:\"Pretendard Variable\",Pretendard,system-ui,sans-serif;width:100%;background:#161616;color:#fff;padding:12px 16px;border:0;border-radius:8px;font-size:15px;box-shadow:inset 0 0 0 1px rgba(255,255,255,.1);transition:box-shadow .15s}.ds-input::placeholder{color:rgba(255,255,255,.3)}.ds-input:focus{outline:none;box-shadow:inset 0 0 0 2px #FF6000}"
+    },
+    {
+      "name": "텍스트 링크",
+      "kind": "custom",
+      "description": "프로젝트 카드의 서비스 링크.",
+      "html": "<a class=\"ds-link\" href=\"#\">서비스 보러 가기 <svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M7 7h10v10\"/><path d=\"M7 17 17 7\"/></svg></a>",
+      "css": ".ds-link{font-family:\"Pretendard Variable\",Pretendard,system-ui,sans-serif;display:inline-flex;align-items:center;gap:6px;color:#FF6000;font-size:14px;font-weight:600;text-decoration:none;text-underline-offset:4px}.ds-link:hover{text-decoration:underline}"
+    },
+    {
+      "name": "워드마크",
+      "kind": "nav",
+      "description": "내비게이션과 푸터의 대학 이름. 사자는 흰색, 곰은 블루.",
+      "html": "<span class=\"ds-wordmark\">LIKELION <span>DKU</span></span>",
+      "css": ".ds-wordmark{font-family:\"Pretendard Variable\",Pretendard,system-ui,sans-serif;color:#fff;font-size:15px;font-weight:700;letter-spacing:-.01em}.ds-wordmark span{color:#7DB3EA;font-weight:500}"
+    },
+    {
+      "name": "엠블럼 패널",
+      "kind": "card",
+      "refersTo": "panel-bear",
+      "description": "사자와 곰. 페이지에 한 번만 나오는 유일한 블루 면.",
+      "html": "<div class=\"ds-panel-bear\"><h3>사자의 갈기를 쓴 곰</h3><p>이 사이트의 오렌지는 사자에게서, 블루는 곰에게서 왔습니다.</p><ul><li><i class=\"ds-dot-lion\"></i><b>사자</b> 멋쟁이사자처럼</li><li><i class=\"ds-dot-bear\"></i><b>곰</b> 단국대학교</li></ul></div>",
+      "css": ".ds-panel-bear{font-family:\"Pretendard Variable\",Pretendard,system-ui,sans-serif;background:#0A559C;color:#fff;border-radius:16px;padding:32px;max-width:440px}.ds-panel-bear h3{margin:0;font-size:28px;font-weight:700;letter-spacing:-.02em;line-height:1.2}.ds-panel-bear p{margin:16px 0 0;font-size:15px;line-height:1.625;color:rgba(255,255,255,.85)}.ds-panel-bear ul{display:flex;gap:28px;list-style:none;margin:24px 0 0;padding:0;font-size:14px;color:rgba(255,255,255,.75)}.ds-panel-bear li{display:flex;align-items:center;gap:8px}.ds-panel-bear b{color:#fff;font-weight:600}.ds-dot-lion,.ds-dot-bear{width:12px;height:12px;border-radius:50%}.ds-dot-lion{background:#FF6000}.ds-dot-bear{background:#fff}"
+    }
+  ],
+  "narrative": {
+    "northStar": "밤샘 작업실",
+    "overview": "해커톤 새벽의 어두운 방이다. 불은 꺼져 있고 모니터만 켜져 있다. 바탕은 거의 검정에 가깝게 가라앉고, 밝은 것은 팀이 만든 서비스 화면과 운영진의 얼굴뿐이다. 장식이 아니라 결과물이 조명 역할을 한다.\n\n분위기는 **친근하고 정돈되어 있다.** 대학생 동아리답게 편하게 말을 걸되(\"~합니다\" 문체, 운영진의 한마디), 간격과 정렬은 흐트러지지 않는다. 버튼·카드·입력창은 **부드럽고 편안하다**: 둥근 모서리, 넉넉한 터치 영역, 그림자 없는 조용한 면.\n\n이 방에는 두 주인이 있다. **사자**(멋쟁이사자처럼)와 **곰**(단국대학교). 대학 엠블럼이 이미 답을 가지고 있다: 사자의 갈기를 쓴 곰. 색도 그 둘에게서 온다. 오렌지는 사자, 블루는 곰이다.\n\n이 시스템이 거부하는 모습은 두 가지다. 보라·파랑 그라데이션과 글래스 카드, 네온 글로우가 뒤섞인 **AI 템플릿 랜딩 페이지**, 그리고 표와 공지글 위주의 **학교 공지 게시판**.",
+    "keyCharacteristics": [
+      "어두운 바탕 위에 실제 결과물 이미지가 유일한 광원이다",
+      "색은 둘뿐이다: 사자 오렌지(행동)와 곰 블루(소속)",
+      "그림자 없이 면의 밝기 차이와 1px 선으로 층을 나눈다",
+      "01–06 번호가 붙은 섹션 머리말이 페이지를 하나의 이야기로 잇는다",
+      "한 번만 떠오르는 조용한 등장 모션"
+    ],
+    "rules": [
+      {
+        "name": "사자는 행동, 곰은 소속",
+        "body": "오렌지는 \"여기를 누르세요\"와 \"이것이 결과물입니다\"를 말한다. 블루는 \"우리는 단국대학교에 있습니다\"를 말한다. 블루 버튼이나 오렌지 소속 표기는 만들지 않는다.",
+        "section": "colors"
+      },
+      {
+        "name": "곰 블루는 글자가 되지 않는다",
+        "body": "`bear-blue` 원색은 검정 바탕에서 대비가 부족하다. 글자와 아이콘에는 반드시 `bear-blue-light`를 쓴다.",
+        "section": "colors"
+      },
+      {
+        "name": "블루 면은 한 화면에 하나",
+        "body": "엠블럼 패널이 귀한 이유는 하나뿐이기 때문이다.",
+        "section": "colors"
+      },
+      {
+        "name": "굵기는 둘",
+        "body": "제목은 700, 본문은 400. 그 사이(500·600)는 라벨과 버튼에만 쓴다.",
+        "section": "typography"
+      },
+      {
+        "name": "빛은 화면에서만 나온다",
+        "body": "글로우, 네온 테두리, 색 그림자를 새로 만들지 않는다. 밝아야 할 것은 결과물 이미지다.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do 오렌지는 누를 수 있는 것과 결과물 강조에만, 블루는 단국대학교 소속 표기에만 쓴다.",
+      "Do 어두운 바탕의 블루 글자는 `bear-blue-light`로 쓴다.",
+      "Do 새 섹션은 `SectionHeader`로 시작하고, 바탕은 새벽 검정과 책상 검정을 번갈아 쓴다.",
+      "Do 층은 검정의 단계와 1px 흰색 링으로 나눈다.",
+      "Do 모서리는 8 / 12 / 16px / 원 네 단계 안에서 고른다.",
+      "Do 엠블럼은 원본 그대로 쓴다. 자르거나 색을 바꾸지 않는다.",
+      "Do 새 색은 `src/tailwind.css`의 `@theme`에 토큰으로 먼저 추가한다."
+    ],
+    "donts": [
+      "Don't 보라·파랑 그라데이션, 글래스 카드, 네온 글로우를 쓰지 않는다. AI 템플릿처럼 보인다.",
+      "Don't 표와 공지글 목록으로 화면을 채우지 않는다. 학교 공지 게시판처럼 보인다.",
+      "Don't 그림자나 색 번짐을 히어로 밖에 추가하지 않는다.",
+      "Don't `bear-blue` 원색을 검정 바탕의 글자·아이콘에 쓰지 않는다.",
+      "Don't 블루 면을 한 화면에 둘 이상 두지 않는다.",
+      "Don't 세 번째 브랜드 색을 들이지 않는다.",
+      "Don't 데이터에 없는 수치나 성과를 화면에 올리지 않는다."
+    ]
+  }
+}

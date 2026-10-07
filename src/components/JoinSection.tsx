@@ -204,7 +204,7 @@ export function JoinSection() {
                 </a>
               </li>
               <li className="flex items-start gap-3">
-                <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-white/40" />
+                <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-bear-light" />
                 <span className="text-white/70">{contact.address}</span>
               </li>
             </ul>

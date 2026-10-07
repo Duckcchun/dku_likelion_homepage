@@ -77,7 +77,8 @@ export function HeroSection() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: EASE }}
         >
-          LIKELION · DANKOOK UNIV.
+          LIKELION <span className="text-white/30">·</span>{" "}
+          <span className="text-bear-light">DANKOOK UNIV.</span>
         </motion.p>
         <motion.h1
           className="mt-6 text-[2.35rem] font-bold leading-[1.1] tracking-[-0.03em] text-white sm:text-6xl md:text-7xl lg:text-[5.5rem]"

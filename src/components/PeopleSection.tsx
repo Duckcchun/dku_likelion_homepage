@@ -35,7 +35,7 @@ export function PeopleSection() {
                 </div>
                 <div className="mt-4 flex items-baseline justify-between gap-2">
                   <h3 className="text-lg font-bold text-white">{m.name}</h3>
-                  <span className="shrink-0 text-sm text-white/45">{m.role}</span>
+                  <span className="shrink-0 text-sm text-bear-light">{m.role}</span>
                 </div>
                 <p className="mt-2 text-[14px] leading-relaxed text-white/55">{m.message}</p>
                 {(m.email || m.github || m.linkedin) && (

@@ -1,5 +1,6 @@
 import { allProducts, productGroups } from "../data/products";
 import { generation, members, tracks } from "../data/site";
+import emblem from "../assets/emblem-lion-bear.png";
 import { Container, Reveal, SectionHeader } from "./layout";
 
 const values = [
@@ -49,6 +50,43 @@ export function AboutSection() {
             </Reveal>
           ))}
         </div>
+
+        {/* 사자와 곰: 대학 엠블럼과 두 브랜드 색의 유래 */}
+        <Reveal className="mt-4 overflow-hidden rounded-2xl bg-bear">
+          <div className="flex flex-col gap-8 p-7 md:flex-row md:items-center md:justify-between md:gap-12 md:p-12">
+            <div className="max-w-xl">
+              <h3 className="text-[1.75rem] font-bold leading-[1.2] tracking-[-0.02em] text-white md:text-4xl">
+                사자의 갈기를 쓴 곰
+              </h3>
+              <p className="mt-4 text-pretty text-[15px] leading-relaxed text-white/85 md:text-base">
+                멋쟁이사자처럼의 사자와 단국대학교의 곰이 만나 우리 대학의 얼굴이 되었습니다. 이 사이트의 오렌지는
+                사자에게서, 블루는 곰에게서 왔습니다.
+              </p>
+              <dl className="mt-7 flex flex-wrap gap-x-8 gap-y-3 text-sm">
+                <div className="flex items-center gap-2.5">
+                  <dt className="h-3 w-3 rounded-full bg-lion" aria-hidden />
+                  <dd className="text-white">
+                    <span className="font-semibold">사자</span> <span className="text-white/75">멋쟁이사자처럼</span>
+                  </dd>
+                </div>
+                <div className="flex items-center gap-2.5">
+                  <dt className="h-3 w-3 rounded-full bg-white" aria-hidden />
+                  <dd className="text-white">
+                    <span className="font-semibold">곰</span> <span className="text-white/75">단국대학교</span>
+                  </dd>
+                </div>
+              </dl>
+            </div>
+            <img
+              src={emblem}
+              alt="멋쟁이사자처럼 단국대학교 엠블럼. 사자 갈기를 쓴 곰의 얼굴"
+              width={720}
+              height={720}
+              loading="lazy"
+              className="order-first h-36 w-36 shrink-0 md:order-none md:h-64 md:w-64"
+            />
+          </div>
+        </Reveal>
 
         <Reveal className="mt-16 grid grid-cols-2 gap-y-10 border-t border-white/[0.08] pt-10 md:grid-cols-4">
           {stats.map((s) => (

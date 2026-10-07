@@ -1,7 +1,7 @@
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useState } from "react";
 import { Menu, X } from "lucide-react";
-import dankookLogo from "../assets/dankook-logo.png";
+import dankookLogo from "../assets/emblem-lion-bear.png";
 import { recruit } from "../data/site";
 
 const navItems = [
@@ -44,7 +44,7 @@ export function Navigation() {
         <a href="#top" className="flex items-center gap-2.5" onClick={() => setOpen(false)}>
           <img src={dankookLogo} alt="" className="h-8 w-8 rounded-full bg-white object-contain" />
           <span className="text-[15px] font-bold tracking-tight text-white">
-            LIKELION <span className="font-medium text-white/50">DKU</span>
+            LIKELION <span className="font-medium text-bear-light">DKU</span>
           </span>
         </a>
 

@@ -7,7 +7,7 @@ export function Footer() {
       <div className="mx-auto flex max-w-7xl flex-col gap-8 px-5 sm:px-8 md:flex-row md:items-center md:justify-between">
         <div>
           <p className="text-[15px] font-bold text-white">
-            LIKELION <span className="font-medium text-white/50">DANKOOK UNIV.</span>
+            LIKELION <span className="font-medium text-bear-light">DANKOOK UNIV.</span>
           </p>
           <p className="mt-2 text-sm text-white/40">
             © {new Date().getFullYear()} 멋쟁이사자처럼 단국대학교. All rights reserved.

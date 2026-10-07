@@ -7,6 +7,22 @@
 @import "tailwindcss/utilities" layer(utilities);
 @source "./";
 
+/*
+ * 브랜드 색. 오렌지는 사자(멋쟁이사자처럼), 블루는 곰(단국대학교)입니다.
+ * 오렌지 = 행동(버튼·링크·강조), 블루 = 소속(단국대·운영진·푸터).
+ * bear-light는 어두운 바탕 위 글자용입니다. (bear 원색은 글자로 쓰면 대비가 부족합니다)
+ */
+@theme {
+  --color-lion: #ff6000;
+  --color-bear: #0a559c;
+  --color-bear-light: #7db3ea;
+}
+
+::selection {
+  background-color: #ff6000;
+  color: #fff;
+}
+
 html {
   scroll-behavior: smooth;
 }
