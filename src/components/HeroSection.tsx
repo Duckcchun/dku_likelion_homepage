@@ -77,6 +77,9 @@ export function HeroSection() {
   // 파티클 엠블럼이 흩어지는 정도 (0 = 모여 있음, 1 = 사라짐)
   const scatter = useTransform(scrollYProgress, (v) => (reduce ? 0 : Math.min(1, Math.max(0, (v - 0.02) / 0.5))));
 
+  // 파티클이 흩어지는 동안 글자 뒤를 어둡게 받쳐 읽기 쉽게 합니다. (모여 있을 때는 0)
+  const scrimOpacity = useTransform(scatter, [0, 0.2], [0, 1]);
+
   const captionOpacity = useTransform(progress, [0.75, 0.92], [0, 1]);
   const captionEvents = useTransform(captionOpacity, (v) => (v > 0.5 ? "auto" : "none"));
   const hintOpacity = useTransform(progress, [0, 0.12], [1, 0]);
@@ -90,6 +93,13 @@ export function HeroSection() {
           mobile={mobile}
           still={reduce}
           className="pointer-events-none absolute inset-0 h-full w-full"
+        />
+
+        {/* 글자 뒤 어둠막: 데스크톱은 왼쪽(글자 쪽), 모바일은 가운데 아래(글자 쪽)만 어둡게 */}
+        <motion.div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_bottom,transparent_28%,rgba(0,0,0,0.82)_42%,rgba(0,0,0,0.82)_76%,transparent_92%)] md:bg-[linear-gradient(to_right,rgba(0,0,0,0.88)_0%,rgba(0,0,0,0.78)_38%,transparent_58%)]"
+          style={{ opacity: scrimOpacity }}
         />
 
         {/* 파티클이 흩어진 자리에 나타나는 프로덕트 화면 */}
@@ -122,14 +132,15 @@ export function HeroSection() {
             </motion.p>
 
             <motion.h1
-              className="mt-5 text-[2.5rem] font-medium leading-[1.06] tracking-[-0.045em] text-white sm:text-5xl md:mt-7 md:text-[clamp(3rem,min(5.7vw,11.5svh),6.25rem)]"
+              className="mt-5 text-[2.5rem] font-medium leading-[1.06] tracking-[-0.045em] text-white sm:text-5xl md:mt-7 md:text-[clamp(2.5rem,min(calc(5.9vw-4px),11.5svh),4.5rem)]"
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7, delay: 0.05, ease: EASE }}
             >
               아이디어를
               <br />
-              서비스로 만드는 곳
+              {/* 두 줄 고정: "곳"만 따로 떨어지지 않도록 한 덩어리로 묶습니다. */}
+              <span className="whitespace-nowrap">서비스로 만드는 곳</span>
             </motion.h1>
 
             <motion.p

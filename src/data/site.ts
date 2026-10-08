@@ -98,6 +98,7 @@ export const milestones: Milestone[] = [
   { title: "정기 세션", date: "3월 – 6월", description: "트랙별 정기 세션과 스터디" },
   {
     title: "아이디어톤",
+    date: "4월 30일 – 6월 1일",
     description: "문제 정의부터 기획·프로토타입까지",
     projectsAnchor: "projects-ideathon",
   },
