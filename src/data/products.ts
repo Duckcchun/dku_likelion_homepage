@@ -7,6 +7,8 @@ import mowa from "../assets/products/mowa.webp";
 import mcmoments from "../assets/products/mcmoments.webp";
 import tomo from "../assets/products/tomo.webp";
 import banana from "../assets/products/banana.webp";
+import conviSeat from "../assets/products/convi-seat.webp";
+import conviSeat2 from "../assets/products/convi-seat-2.webp";
 
 export interface Product {
   id: string;
@@ -46,9 +48,39 @@ export interface ProductGroup {
 }
 
 /**
- * 한 해의 진행 순서대로 적어 주세요. (아이디어톤 → 해커톤 → …)
+ * 한 해의 진행 순서대로 적어 주세요. (학교대항전 → 아이디어톤 → 해커톤 → …)
+ * 멋쟁이사자처럼 대학의 대회는 모두 '애니멀리그'라고 부릅니다.
  */
 export const productGroups: ProductGroup[] = [
+  {
+    id: "projects-interschool",
+    event: "애니멀리그 학교대항전",
+    label: "학교대항전",
+    year: 2026,
+    summary: "올해 첫 애니멀리그. 학교 대항으로 겨룬 학교대항전에서 만든 서비스입니다.",
+    products: [
+      {
+        id: "convi-seat",
+        name: "편의점",
+        tagline: "편(하게) 의(자에 앉을 수 있는) 점: 빈 테이블을 미리 알고 가는 편의점 좌석 지도",
+        description:
+          "시험 기간, 컵라면에 물까지 부었는데 앉을 자리가 없던 경험에서 출발했어요. 주변 편의점의 좌석 여부를 방문 전에 확인하고, 다녀온 뒤 몇 번의 터치로 제보하는 크라우드소싱 지도입니다.",
+        problem:
+          "이름은 '편의'점인데 다리는 하나도 안 편합니다. 과제하기도 벅찬데 밥 먹을 자리 찾는 눈치 게임까지 해야 할까요? 빈 테이블이 없어 삼각김밥을 들고 헤매는 헛걸음을 줄이기 위해, 우리가 직접 채워 가는 진짜 '편의'점 지도를 만들었습니다.",
+        features: [
+          "카카오맵으로 내 주변 편의점 위치를 한눈에 확인",
+          "좌석 있음(초록) · 없음(빨강) · 불확실(회색) 세 가지 상태를 실시간으로 공유",
+          "터치 몇 번이면 끝나는 좌석 현황 제보",
+        ],
+        category: "Campus Life · Map",
+        accentColor: "#F2913D",
+        image: conviSeat,
+        imagePosition: "center 40%",
+        images: [conviSeat2],
+        link: "https://convi-seat-finder.vercel.app/",
+      },
+    ],
+  },
   {
     id: "projects-ideathon",
     event: "멋쟁이사자처럼 대학 아이디어톤",

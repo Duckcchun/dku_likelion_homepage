@@ -17,8 +17,12 @@ const accentStyle = (p: Product) => ({ "--accent": p.accentColor ?? "#FF6000" })
  * - 홀수 개: 앞의 두 개는 절반, 나머지는 3등분(2칸)
  */
 function spanFor(index: number, total: number) {
-  if (total % 2 === 0) return { span: "md:col-span-3", large: true };
-  return index < 2 ? { span: "md:col-span-3", large: true } : { span: "md:col-span-2", large: false };
+  // 혼자인 프로젝트는 한 줄을 다 쓰는 가로형 카드 (이미지 왼쪽, 글 오른쪽)
+  if (total === 1) return { span: "md:col-span-6", large: true, wide: true };
+  if (total % 2 === 0) return { span: "md:col-span-3", large: true, wide: false };
+  return index < 2
+    ? { span: "md:col-span-3", large: true, wide: false }
+    : { span: "md:col-span-2", large: false, wide: false };
 }
 
 function ProductCard({
@@ -32,7 +36,7 @@ function ProductCard({
   total: number;
   onOpen: (p: Product) => void;
 }) {
-  const { span, large } = spanFor(index, total);
+  const { span, large, wide } = spanFor(index, total);
 
   return (
     <motion.article
@@ -50,12 +54,12 @@ function ProductCard({
           e.preventDefault();
           onOpen(product);
         }}
-        className="group flex flex-1 flex-col rounded-xl focus-visible:outline-none"
+        className={`group flex flex-1 flex-col rounded-xl focus-visible:outline-none ${wide ? "md:flex-row md:items-center md:gap-12" : ""}`}
       >
         <span
           className={`relative block w-full overflow-hidden rounded-xl bg-[#161616] ring-1 ring-inset ring-white/[0.06] transition-[box-shadow] duration-300 group-hover:shadow-[0_28px_70px_-30px_var(--accent)] group-hover:ring-[color:var(--accent)] group-focus-visible:ring-2 group-focus-visible:ring-[#FF6000] ${
             large ? "aspect-[16/10]" : "aspect-[4/3]"
-          }`}
+          } ${wide ? "md:w-7/12 md:shrink-0" : ""}`}
         >
           <img
             src={product.image}
@@ -66,7 +70,7 @@ function ProductCard({
           />
         </span>
 
-        <span className="mt-5 flex flex-1 flex-col">
+        <span className={`mt-5 flex flex-1 flex-col ${wide ? "md:mt-0" : ""}`}>
           <span className="text-xs font-medium uppercase tracking-[0.14em] text-white/50">{product.category}</span>
           <h4 className={`mt-2 font-display font-bold tracking-[-0.01em] text-white ${large ? "text-2xl md:text-[1.75rem]" : "text-xl md:text-2xl"}`}>
             {product.name}
@@ -288,7 +292,7 @@ export function ProjectsSection() {
               우리가 만든 것들
             </>
           }
-          description={`아이디어톤에서 문제를 정의하고, 해커톤에서 실제로 만들었습니다. 올해 완성한 서비스 ${allProducts.length}개를 소개합니다.`}
+          description={`학교대항전부터 아이디어톤, 중앙 해커톤까지. 올해 애니멀리그에서 완성한 서비스 ${allProducts.length}개를 소개합니다.`}
           aside={
             <div className="mt-5 flex flex-wrap gap-2 md:justify-end">
               {productGroups.map((g) => (

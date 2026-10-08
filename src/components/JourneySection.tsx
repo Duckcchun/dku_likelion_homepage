@@ -34,10 +34,10 @@ export function JourneySection() {
               세상에 보여 줍니다.
             </>
           }
-          description="정기 세션으로 기본기를 쌓고 나면, 아이디어톤과 해커톤에서 그 실력을 실제 서비스로 증명합니다."
+          description="정기 세션으로 기본기를 쌓고 나면, 애니멀리그(학교대항전 · 아이디어톤 · 해커톤)에서 그 실력을 실제 서비스로 증명합니다."
         />
 
-        <ol ref={listRef} className="relative isolate grid gap-0 md:grid-cols-6">
+        <ol ref={listRef} className="relative isolate grid gap-0 md:grid-cols-7">
           {/* 가로선 (데스크톱) */}
           <span aria-hidden className="absolute left-0 right-0 top-[7px] hidden h-px bg-white/15 md:block" />
           {/* 세로선 (모바일) */}
@@ -60,7 +60,7 @@ export function JourneySection() {
             return (
               <motion.li
                 key={m.title}
-                className="relative z-10 pb-10 pl-9 md:pb-0 md:pl-0 md:pr-6"
+                className="relative z-10 pb-10 pl-9 md:pb-0 md:pl-0 md:pr-4"
                 initial={{ opacity: 0, y: 16 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, amount: 0.5 }}

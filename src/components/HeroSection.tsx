@@ -38,8 +38,10 @@ function RowCard({
   progress: MotionValue<number>;
   mobile: boolean;
 }) {
-  const row = mobile ? ROW.mobile : ROW.desktop;
   const fromCenter = index - (total - 1) / 2;
+  // 데스크톱: 개수가 늘어도 화면 폭(96vw) 안에 한 줄로 들어가도록 카드 폭과 간격을 맞춥니다.
+  const deskWidth = Math.min(10.2, (96 - (total - 1) * 0.8) / total);
+  const row = mobile ? ROW.mobile : { ...ROW.desktop, step: Math.min(ROW.desktop.step, deskWidth + 0.8) };
 
   // 가운데 카드부터 바깥쪽으로 차례로 나타납니다.
   const start = 0.42 + 0.025 * Math.abs(fromCenter);
@@ -51,8 +53,15 @@ function RowCard({
 
   return (
     <motion.li
-      className="absolute left-1/2 top-1/2 -ml-[15vw] -mt-[9.375vw] w-[30vw] md:-ml-[5.1vw] md:-mt-[3.1875vw] md:w-[10.2vw]"
-      style={{ x: `${fromCenter * row.step}vw`, y, opacity }}
+      className="absolute left-1/2 top-1/2 -ml-[15vw] -mt-[9.375vw] w-[30vw]"
+      style={{
+        x: `${fromCenter * row.step}vw`,
+        y,
+        opacity,
+        ...(mobile
+          ? {}
+          : { width: `${deskWidth}vw`, marginLeft: `-${deskWidth / 2}vw`, marginTop: `-${deskWidth * 0.3125}vw` }),
+      }}
     >
       <div className="aspect-[16/10] overflow-hidden rounded-md bg-[#161616] ring-1 ring-white/10 md:rounded-lg">
         <img

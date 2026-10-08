@@ -4,6 +4,7 @@
       "private": true,
       "dependencies": {
             "@emailjs/browser": "^4.4.1",
+            "@vercel/analytics": "^2.0.1",
             "lucide-react": "^0.487.0",
             "motion": "*",
             "react": "^18.3.1",

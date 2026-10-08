@@ -31,7 +31,9 @@ npm run build   # build/ 폴더에 결과물
 
 ### 모집 열고 닫기
 
-`recruit.isOpen`을 `true`로 바꾸고 `recruit.applyUrl`에 **실제 지원서 주소**를 넣으세요. 닫혀 있는 동안에는 버튼을 누르면 "현재 지원 기간이 아닙니다" 안내가 뜨고 인스타그램으로 안내합니다.
+`recruit.isOpen`을 `true`로 바꾸고 `recruit.applyUrl`에 **실제 지원서 주소**를 넣으세요. 닫혀 있는 동안에는 버튼을 누르면 "현재 지원 기간이 아닙니다" 안내가 뜨고, 함께하기 섹션에서 다음 기수 **모집 알림 신청**(이메일)을 받습니다. 신청은 문의 폼과 같은 EmailJS 설정으로 동아리 메일에 "N기 모집 알림 신청" 제목으로 도착합니다. 모집이 열리면 받은 주소로 안내 메일을 보내고, 모집이 끝나면 지워 주세요(사이트에 그렇게 약속해 두었습니다).
+
+자주 묻는 질문은 `site.ts`의 `faq`에서 고칩니다.
 
 ### `src/data/products.ts`
 
@@ -48,6 +50,10 @@ npm run build   # build/ 폴더에 결과물
 | `accentColor` | 서비스 대표 색. 카드에 마우스를 올리면 번집니다. 어두운 바탕에서 보이는 밝은 색으로 고르세요. |
 
 각 프로젝트는 `https://dku-likelion.vercel.app/#project-<id>` 주소로 바로 공유할 수 있습니다.
+
+## 방문 통계
+
+Vercel Web Analytics(`@vercel/analytics`)가 들어 있습니다. Vercel 프로젝트의 **Analytics** 탭에서 한 번 켜 주면 방문 수와 유입 경로가 집계됩니다.
 
 ## 문의 폼
 

@@ -8,6 +8,7 @@ import { PeopleSection } from "./components/PeopleSection";
 import { JoinSection } from "./components/JoinSection";
 import { Footer } from "./components/Footer";
 import { ScrollToTop } from "./components/ScrollToTop";
+import { Analytics } from "@vercel/analytics/react";
 
 /**
  * 페이지 흐름: 소개 → 배우는 것(트랙) → 1년의 흐름 → 만든 것(프로젝트) → 사람 → 함께하기
@@ -35,6 +36,8 @@ export default function App() {
       </main>
       <Footer />
       <ScrollToTop />
+      {/* Vercel Web Analytics: 방문 수·유입 경로 (Vercel 대시보드에서 Analytics를 켜야 집계됩니다) */}
+      <Analytics />
     </div>
   );
 }

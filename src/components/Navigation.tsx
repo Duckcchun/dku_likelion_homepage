@@ -124,8 +124,8 @@ export function Navigation() {
             exit={{ opacity: 0, y: 4 }}
             transition={{ duration: 0.2, ease: [0.23, 1, 0.32, 1] }}
           >
-            <strong className="font-semibold text-white">현재 지원 기간이 아닙니다.</strong> 다음 모집 소식은
-            인스타그램에서 알려 드려요.
+            <strong className="font-semibold text-white">현재 지원 기간이 아닙니다.</strong> 아래에서 모집 알림을
+            신청해 주세요.
           </motion.p>
         )}
       </AnimatePresence>
