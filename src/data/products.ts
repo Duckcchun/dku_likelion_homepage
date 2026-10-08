@@ -61,8 +61,8 @@ export const productGroups: ProductGroup[] = [
     products: [
       {
         id: "convi-seat",
-        name: "편의점",
-        tagline: "편(하게) 의(자에 앉을 수 있는) 점: 빈 테이블을 미리 알고 가는 편의점 좌석 지도",
+        name: "편(하게) 의(자에 앉을 수 있는) 점",
+        tagline: "빈 테이블을 미리 알고 가는 편의점 좌석 공유 지도",
         description:
           "시험 기간, 컵라면에 물까지 부었는데 앉을 자리가 없던 경험에서 출발했어요. 주변 편의점의 좌석 여부를 방문 전에 확인하고, 다녀온 뒤 몇 번의 터치로 제보하는 크라우드소싱 지도입니다.",
         problem:
