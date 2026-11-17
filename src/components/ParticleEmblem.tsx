@@ -9,6 +9,11 @@ import emblemSrc from "../assets/emblem-lion-bear.webp";
  * 아래로 무너져 내린 뒤 갈기를 두른 사자(멋쟁이사자처럼, 오렌지)로 다시 모입니다.
  * 몇 초마다 둘 사이를 오갑니다.
  *
+ * - 곰과 사자는 타원체 여러 덩이를 이어 붙인 겉면 위에 입자를 찍어 만들고, 눈·코·입·귀 테는 그 굴곡 위에 선으로 그립니다.
+ *   사자의 갈기는 끝이 뾰족한 가닥 수십 개이고, 끝으로 갈수록 바람에 일렁입니다.
+ * - 입자는 표면에 얹혀 까딱거리며, 표면이 받는 빛(왼쪽 위 조명 + 윤곽광)에 따라 밝기가 달라져 덩어리가 입체로 읽힙니다.
+ * - 전환은 위에서 아래로 물결처럼 번집니다. 눈은 눈으로, 코는 코로, 겉면은 가까운 자리끼리 짝지어 옮겨 갑니다.
+ * - 형상 입자 일부에는 부드러운 빛무리를 깔아, 촘촘한 곳이 은은하게 번집니다. (후처리 없이 입자만으로)
  * - 입자 하나하나가 3D 공간에서 제 축을 따라 도는 진짜 삼각형 틀입니다. 정면을 향하면 밝고, 옆으로 누우면 어둡습니다.
  * - 주변을 떠다니는 큰 도형은 두께가 있는 입체(삼각형 틀, 정사면체 뼈대)이고, 면마다 밝기가 달라 덩어리로 보입니다.
  * - 가까운 입자는 크고 밝게, 먼 입자는 작고 어둡게 그려 깊이를 만듭니다.
@@ -21,8 +26,8 @@ import emblemSrc from "../assets/emblem-lion-bear.webp";
  */
 
 const COUNT = {
-  desktop: { shape: 9000, ambient: 1900, solidsNear: 12, solidsCorner: 18, solidsRing: 30, solidsMid: 54 },
-  mobile: { shape: 3000, ambient: 560, solidsNear: 4, solidsCorner: 7, solidsRing: 10, solidsMid: 17 },
+  desktop: { shape: 11000, ambient: 1900, solidsNear: 12, solidsCorner: 18, solidsRing: 30, solidsMid: 54 },
+  mobile: { shape: 3600, ambient: 560, solidsNear: 4, solidsCorner: 7, solidsRing: 10, solidsMid: 17 },
 };
 
 /** 화면 안에서의 자리와 크기. cx·cy는 화면 비율, size는 화면 높이(모바일은 너비) 대비 전체 지름 */
@@ -32,7 +37,10 @@ const PLACE = {
 };
 
 /** 한 번 오가는 시간(초): 곰 유지 → 무너지며 사자로 → 사자 유지 → 다시 곰으로 */
-const TIMING = { bear: 4.2, morph: 2.6, lion: 6.4 };
+const TIMING = { bear: 4.2, morph: 3.2, lion: 6.4 };
+
+/** 형상 입자 가운데 빛무리를 함께 그리는 비율 */
+const HALO_SHARE = 0.2;
 
 /** 형태의 가장 바깥 반지름(갈기 끝). 크기를 맞출 때 씁니다. */
 const EXTENT = 1.55;
@@ -58,6 +66,30 @@ const LION_FACE: Palette = [
   ["#FFB020", 40],
   ["#FF6000", 32],
   ["#FFFFFF", 28],
+];
+const BEAR_MUZZLE: Palette = [
+  ["#7DB3EA", 46],
+  ["#FFFFFF", 30],
+  ["#4A90D6", 24],
+];
+const MANE_ROOT: Palette = [
+  ["#FFB020", 62],
+  ["#FF6000", 26],
+  ["#FFFFFF", 12],
+];
+const MANE_TIP: Palette = [
+  ["#FF3D00", 52],
+  ["#FF6000", 44],
+  ["#4A90D6", 4],
+];
+const LION_MUZZLE: Palette = [
+  ["#FFFFFF", 44],
+  ["#FFB020", 40],
+  ["#FF6000", 16],
+];
+const LION_FEATURE: Palette = [
+  ["#FFFFFF", 80],
+  ["#FFE1A6", 20],
 ];
 const FEATURE: Palette = [
   ["#FFFFFF", 85],
@@ -92,134 +124,360 @@ function randomDirection(): Vec3 {
   return [Math.cos(a) * r, Math.sin(a) * r, z];
 }
 
-interface Ball {
-  c: Vec3;
-  r: number;
-  /** 앞뒤로 납작한 정도 */
-  flat?: number;
-}
-
-const inside = (p: Vec3, b: Ball, shrink = 0.96) => {
-  const dx = p[0] - b.c[0];
-  const dy = p[1] - b.c[1];
-  const dz = (p[2] - b.c[2]) / (b.flat ?? 1);
-  return dx * dx + dy * dy + dz * dz < (b.r * shrink) ** 2;
+const normalize = (v: Vec3): Vec3 => {
+  const l = Math.hypot(v[0], v[1], v[2]) || 1;
+  return [v[0] / l, v[1] / l, v[2] / l];
 };
 
-/** 공 표면의 점. 다른 공 안에 묻히는 점은 버립니다. */
-function onBall(ball: Ball, others: Ball[], jitter = 0.02): Vec3 {
-  for (let tries = 0; tries < 30; tries++) {
+/** 형상을 이루는 덩어리 하나: 타원체 (c 중심, r 세 축의 반지름) */
+interface Part {
+  c: Vec3;
+  r: Vec3;
+}
+/** 표면 위의 점 하나와 그 자리의 바깥 방향(법선) */
+interface Sample {
+  p: Vec3;
+  n: Vec3;
+}
+type P2 = [number, number];
+
+const part = (c: Vec3, r: Vec3 | number): Part => ({ c, r: typeof r === "number" ? [r, r, r] : r });
+
+const insidePart = (p: Vec3, e: Part, shrink = 0.97) =>
+  ((p[0] - e.c[0]) / e.r[0]) ** 2 + ((p[1] - e.c[1]) / e.r[1]) ** 2 + ((p[2] - e.c[2]) / e.r[2]) ** 2 < shrink * shrink;
+
+/**
+ * 덩어리 표면의 점. 다른 덩어리 속에 묻히는 점은 버려서 겉면만 남깁니다.
+ * 뒤통수 쪽은 어차피 잘 보이지 않으므로 성기게 두고, 그만큼 얼굴 쪽을 촘촘하게 씁니다.
+ */
+function onPart(e: Part, all: Part[]): Sample {
+  for (let tries = 0; tries < 40; tries++) {
     const d = randomDirection();
-    const r = ball.r * (1 + (Math.random() - 0.5) * jitter * 2);
-    const p: Vec3 = [ball.c[0] + d[0] * r, ball.c[1] + d[1] * r, ball.c[2] + d[2] * r * (ball.flat ?? 1)];
-    if (!others.some((o) => inside(p, o))) return p;
+    const n = normalize([d[0] / e.r[0], d[1] / e.r[1], d[2] / e.r[2]]);
+    if (n[2] < -0.1 && Math.random() < 0.62) continue;
+    const j = 1 + (Math.random() - 0.5) * 0.03;
+    const p: Vec3 = [e.c[0] + d[0] * e.r[0] * j, e.c[1] + d[1] * e.r[1] * j, e.c[2] + d[2] * e.r[2] * j];
+    if (all.some((o) => o !== e && insidePart(p, o))) continue;
+    return { p, n };
   }
-  return [ball.c[0], ball.c[1] + ball.r, ball.c[2]];
+  return { p: [e.c[0], e.c[1], e.c[2] + e.r[2]], n: [0, 0, 1] };
 }
 
-/** 눈·코처럼 작게 뭉친 점 */
-function inBlob(c: Vec3, rx: number, ry: number): Vec3 {
+/** 정면에서 본 (x, y) 자리를 형상의 앞쪽 겉면 위로 올립니다. 눈·코·입을 얼굴 굴곡에 맞춰 그릴 때 씁니다. */
+function onFront(parts: Part[], [x, y]: P2, lift = 0.018): Sample {
+  let best: Sample | null = null;
+  for (const e of parts) {
+    const u = (x - e.c[0]) / e.r[0];
+    const v = (y - e.c[1]) / e.r[1];
+    const k = 1 - u * u - v * v;
+    if (k <= 0) continue;
+    const w = Math.sqrt(k);
+    const z = e.c[2] + e.r[2] * w;
+    if (!best || z > best.p[2]) best = { p: [x, y, z], n: normalize([u / e.r[0], v / e.r[1], w / e.r[2]]) };
+  }
+  if (!best) return { p: [x, y, 0], n: [0, 0, 1] };
+  best.p[2] += lift;
+  return best;
+}
+
+/** 꽉 찬 타원 안의 점 (tilt만큼 기울임) */
+function inEllipse(c: P2, rx: number, ry: number, tilt = 0): P2 {
   const a = Math.random() * Math.PI * 2;
   const r = Math.sqrt(Math.random());
-  return [c[0] + Math.cos(a) * r * rx, c[1] + Math.sin(a) * r * ry, c[2] + (Math.random() - 0.5) * 0.03];
+  const x = Math.cos(a) * r * rx;
+  const y = Math.sin(a) * r * ry;
+  return [c[0] + x * Math.cos(tilt) - y * Math.sin(tilt), c[1] + x * Math.sin(tilt) + y * Math.cos(tilt)];
 }
 
-/* ───────── 곰 ───────── */
-const bearHead: Ball = { c: [0, -0.05, 0], r: 1, flat: 0.92 };
-const bearEars: Ball[] = [
-  { c: [-0.74, 0.74, -0.05], r: 0.37 },
-  { c: [0.74, 0.74, -0.05], r: 0.37 },
-];
-const bearMuzzle: Ball = { c: [0, -0.34, 0.74], r: 0.4 };
-
-function bearPoint(): { p: Vec3; feature: boolean } {
-  const k = Math.random();
-  if (k < 0.6) return { p: onBall(bearHead, [...bearEars, bearMuzzle]), feature: false };
-  if (k < 0.77) {
-    const ear = bearEars[Math.random() < 0.5 ? 0 : 1];
-    return { p: onBall(ear, [bearHead]), feature: false };
+/** 꽉 찬 삼각형 안의 점 */
+function inTriangle(a: P2, b: P2, c: P2): P2 {
+  let u = Math.random();
+  let v = Math.random();
+  if (u + v > 1) {
+    u = 1 - u;
+    v = 1 - v;
   }
-  if (k < 0.945) return { p: onBall(bearMuzzle, [bearHead]), feature: false };
-  if (k < 0.978) return { p: inBlob([Math.random() < 0.5 ? -0.37 : 0.37, 0.16, 0.86], 0.075, 0.085), feature: true };
-  return { p: inBlob([0, -0.2, 1.14], 0.13, 0.085), feature: true };
+  return [a[0] + (b[0] - a[0]) * u + (c[0] - a[0]) * v, a[1] + (b[1] - a[1]) * u + (c[1] - a[1]) * v];
+}
+
+/** 붓으로 그은 선 위의 점: 2차 곡선(시작·당김점·끝) 여러 개 중 하나를 골라 그 위에 찍습니다. */
+type Curve = [P2, P2, P2];
+function onStroke(curves: Curve[], width: number): P2 {
+  const [a, b, c] = curves[Math.floor(Math.random() * curves.length)];
+  const t = Math.random();
+  const k = 1 - t;
+  return [
+    k * k * a[0] + 2 * k * t * b[0] + t * t * c[0] + (Math.random() - 0.5) * width,
+    k * k * a[1] + 2 * k * t * b[1] + t * t * c[1] + (Math.random() - 0.5) * width,
+  ];
+}
+
+/** 눈·코·입 등 얼굴 그림의 갈래. 곰과 사자의 같은 갈래끼리 짝을 지어 눈은 눈으로, 코는 코로 옮겨 갑니다. */
+const FEATURES = [
+  { kind: "eyeL", share: 0.14 },
+  { kind: "eyeR", share: 0.14 },
+  { kind: "nose", share: 0.17 },
+  { kind: "mouth", share: 0.19 },
+  { kind: "extraL", share: 0.18 },
+  { kind: "extraR", share: 0.18 },
+] as const;
+type FeatureKind = (typeof FEATURES)[number]["kind"];
+
+/* ───────── 곰 ───────── */
+const bearHead = part([0, -0.05, 0], [1, 0.92, 0.9]);
+const bearEars = [part([-0.74, 0.72, -0.05], [0.36, 0.36, 0.28]), part([0.74, 0.72, -0.05], [0.36, 0.36, 0.28])];
+const bearMuzzle = part([0, -0.33, 0.74], [0.42, 0.34, 0.36]);
+const bearParts = [bearHead, ...bearEars, bearMuzzle];
+
+function bearSurface(): Sample & { color: string } {
+  const k = Math.random();
+  if (k < 0.58) return { ...onPart(bearHead, bearParts), color: pickColor(BEAR) };
+  if (k < 0.78) return { ...onPart(bearEars[Math.random() < 0.5 ? 0 : 1], bearParts), color: pickColor(BEAR) };
+  return { ...onPart(bearMuzzle, bearParts), color: pickColor(BEAR_MUZZLE) };
+}
+
+function bearFeature(kind: FeatureKind): P2 {
+  const side = kind.endsWith("L") ? -1 : 1;
+  switch (kind) {
+    case "eyeL":
+    case "eyeR":
+      return inEllipse([0.36 * side, 0.15], 0.07, 0.085);
+    case "nose":
+      return inEllipse([0, -0.2], 0.135, 0.085);
+    case "mouth":
+      // 코 밑에서 내려와 양쪽으로 살짝 올라가는 입
+      return onStroke(
+        [
+          [[0, -0.28], [0, -0.36], [0, -0.44]],
+          [[0, -0.44], [-0.1, -0.54], [-0.22, -0.46]],
+          [[0, -0.44], [0.1, -0.54], [0.22, -0.46]],
+        ],
+        0.016,
+      );
+    default: {
+      // 귀 안쪽의 둥근 테
+      const a = Math.random() * Math.PI * 2;
+      const r = 0.19 + (Math.random() - 0.5) * 0.016;
+      return [0.74 * side + Math.cos(a) * r, 0.72 + Math.sin(a) * r];
+    }
+  }
 }
 
 /* ───────── 사자 ───────── */
-const lionHead: Ball = { c: [0, -0.06, 0.18], r: 0.8, flat: 0.95 };
-const lionEars: Ball[] = [
-  { c: [-0.6, 0.62, 0.2], r: 0.23 },
-  { c: [0.6, 0.62, 0.2], r: 0.23 },
+const lionSkull = part([0, 0.04, 0.08], [0.72, 0.66, 0.62]);
+const lionBridge = part([0, 0, 0.58], [0.25, 0.34, 0.24]); // 눈 사이에서 코까지 내려오는 긴 콧등
+const lionMuzzle = part([0, -0.3, 0.62], [0.43, 0.27, 0.36]);
+const lionChin = part([0, -0.52, 0.52], [0.21, 0.15, 0.22]);
+const lionCheeks = [part([-0.42, -0.16, 0.3], 0.32), part([0.42, -0.16, 0.3], 0.32)];
+const lionEars = [part([-0.56, 0.62, 0.1], [0.23, 0.23, 0.12]), part([0.56, 0.62, 0.1], [0.23, 0.23, 0.12])];
+const lionParts = [lionSkull, lionBridge, lionMuzzle, lionChin, ...lionCheeks, ...lionEars];
+
+const WHISKER_DOTS: P2[] = [
+  [0.15, -0.3],
+  [0.24, -0.29],
+  [0.33, -0.29],
+  [0.18, -0.37],
+  [0.28, -0.36],
+  [0.23, -0.43],
 ];
-const lionMuzzle: Ball = { c: [0, -0.36, 0.84], r: 0.35 };
 
-/** 갈기: 얼굴 둘레로 뾰족뾰족하게 뻗은 털 */
-function manePoint(): Vec3 {
-  for (let tries = 0; tries < 30; tries++) {
-    const d = randomDirection();
-    if (d[2] > 0.5) continue; // 얼굴 앞은 비워 둡니다.
-    const a = Math.atan2(d[1], d[0]);
-    const tuft = Math.pow(Math.abs(Math.sin(a * 6.5 + d[2] * 2.2)), 0.7);
-    // 아래쪽(턱)은 더 길게
-    const beard = Math.max(0, -Math.sin(a)) ** 3 * 0.22;
-    const r = 1.0 + tuft * 0.32 + beard + Math.random() * 0.1;
-    return [d[0] * r, d[1] * r - 0.05, d[2] * r * 0.7 + 0.12];
+function lionFeature(kind: FeatureKind): P2 {
+  const s = kind.endsWith("L") ? -1 : 1;
+  switch (kind) {
+    case "eyeL":
+    case "eyeR":
+      // 눈꼬리가 올라간 아몬드 모양 눈 + 눈꼬리 밖으로 뻗는 윗눈꺼풀 선
+      return Math.random() < 0.62
+        ? inEllipse([0.33 * s, 0.13], 0.075, 0.036, 0.3 * s)
+        : onStroke([[[0.21 * s, 0.07], [0.32 * s, 0.185], [0.46 * s, 0.185]]], 0.014);
+    case "nose":
+      // 위가 넓은 역삼각형 코
+      return inTriangle([-0.19, -0.12], [0.19, -0.12], [0, -0.3]);
+    case "mouth":
+      return onStroke(
+        [
+          [[0, -0.3], [0, -0.35], [0, -0.39]],
+          [[0, -0.39], [-0.13, -0.52], [-0.32, -0.42]],
+          [[0, -0.39], [0.13, -0.52], [0.32, -0.42]],
+        ],
+        0.016,
+      );
+    default: {
+      const k = Math.random();
+      // 귀 안쪽의 둥근 테 (곰의 귀 테가 그대로 옮겨 옵니다)
+      if (k < 0.4) {
+        const a = Math.random() * Math.PI * 2;
+        const r = 0.125 + (Math.random() - 0.5) * 0.014;
+        return [0.56 * s + Math.cos(a) * r, 0.62 + Math.sin(a) * r];
+      }
+      // 눈 안쪽에서 코로 내려오는 넓은 콧등의 옆선
+      if (k < 0.68) return onStroke([[[0.17 * s, 0.08], [0.2 * s, -0.02], [0.2 * s, -0.12]]], 0.014);
+      // 수염 자리의 점
+      const dot = WHISKER_DOTS[Math.floor(Math.random() * WHISKER_DOTS.length)];
+      return inEllipse([dot[0] * s, dot[1]], 0.014, 0.014);
+    }
   }
-  return [0, 1.3, 0];
 }
 
-function lionPoint(): { p: Vec3; kind: "mane" | "face" | "feature" } {
+/** 갈기 한 가닥: 얼굴 둘레에서 바깥으로 뻗으며 끝이 뾰족해지는 털 뭉치 */
+interface Lock {
+  a: number; // 얼굴 둘레의 각도
+  layer: number; // 0 앞, 1 가운데, 2 뒤
+  root: number; // 뿌리의 반지름
+  z: number;
+  len: number;
+  back: number; // 끝으로 갈수록 뒤로 넘어가는 정도
+  width: number;
+  curl: number; // 끝이 옆으로 휘는 정도
+  droop: number; // 옆 가닥이 아래로 처지는 정도
+}
+
+function makeLocks(): Lock[] {
+  const layers = [
+    { n: 11, root: 0.64, z: 0.3, len: 0.42, back: 0.12 },
+    { n: 13, root: 0.64, z: 0.08, len: 0.62, back: 0.26 },
+    { n: 15, root: 0.62, z: -0.2, len: 0.82, back: 0.32 },
+  ];
+  return layers.flatMap((L, layer) =>
+    Array.from({ length: L.n }, (_, k) => {
+      const a = ((k + Math.random() * 0.6 + layer * 0.37) / L.n) * Math.PI * 2;
+      const down = Math.max(0, -Math.sin(a)); // 턱 아래는 더 길게
+      return {
+        a,
+        layer,
+        root: L.root,
+        z: L.z,
+        len: L.len * (0.85 + Math.random() * 0.25) * (1 + down * 0.12),
+        back: L.back,
+        width: ((Math.PI * L.root) / L.n) * (0.95 + Math.random() * 0.3),
+        curl: (Math.random() - 0.5) * 0.5,
+        droop: 0.12 * Math.cos(a) ** 2,
+      };
+    }),
+  );
+}
+
+function manePoint(locks: Lock[]): Sample & { color: string; flex: number } {
+  const lock = locks[Math.floor(Math.random() * locks.length)];
+  // s: 뿌리 0 → 끝 1. 가닥이 끝으로 갈수록 가늘어지므로 뿌리 쪽에 더 많이 찍습니다.
+  const s = 1 - Math.pow(Math.random(), 0.8);
+  const w = lock.width * (1 - s) + 0.006;
+  const u = Math.random() * 2 - 1;
+  const r = lock.root + lock.len * s;
+  const ang = lock.a + lock.curl * s * s;
+  const p: Vec3 = [
+    Math.cos(ang) * r - Math.sin(ang) * u * w,
+    Math.sin(ang) * r + Math.cos(ang) * u * w - lock.droop * s * s + 0.04,
+    lock.z - lock.back * s + (Math.random() - 0.5) * w * 0.8,
+  ];
+  const n = normalize([Math.cos(ang) * 0.55, Math.sin(ang) * 0.55, 0.9 - lock.layer * 0.22]);
+  // 뿌리는 금빛, 가운데는 오렌지, 끝은 붉은 오렌지
+  const tone = s + (Math.random() - 0.5) * 0.3;
+  const color = pickColor(tone < 0.28 ? MANE_ROOT : tone < 0.72 ? MANE : MANE_TIP);
+  return { p, n, color, flex: Math.max(s, 0.001) };
+}
+
+function lionSurface(locks: Lock[]): Sample & { color: string; flex: number } {
   const k = Math.random();
-  if (k < 0.6) return { p: manePoint(), kind: "mane" };
-  if (k < 0.79) return { p: onBall(lionHead, [...lionEars, lionMuzzle]), kind: "face" };
-  if (k < 0.84) {
-    const ear = lionEars[Math.random() < 0.5 ? 0 : 1];
-    return { p: onBall(ear, [lionHead]), kind: "face" };
-  }
-  if (k < 0.945) return { p: onBall(lionMuzzle, [lionHead]), kind: "face" };
-  if (k < 0.978) return { p: inBlob([Math.random() < 0.5 ? -0.31 : 0.31, 0.14, 0.94], 0.065, 0.07), kind: "feature" };
-  return { p: inBlob([0, -0.22, 1.19], 0.14, 0.08), kind: "feature" };
+  if (k < 0.52) return manePoint(locks);
+  const face = (e: Part, colors: Palette) => ({ ...onPart(e, lionParts), color: pickColor(colors), flex: 0 });
+  if (k < 0.71) return face(lionSkull, LION_FACE);
+  if (k < 0.76) return face(lionBridge, LION_FACE);
+  if (k < 0.86) return face(lionMuzzle, LION_MUZZLE);
+  if (k < 0.89) return face(lionChin, LION_MUZZLE);
+  if (k < 0.96) return face(lionCheeks[Math.random() < 0.5 ? 0 : 1], LION_FACE);
+  return face(lionEars[Math.random() < 0.5 ? 0 : 1], LION_FACE);
 }
+
+/** 입자 하나가 곰일 때와 사자일 때의 자리·법선·색, 그리고 크기 등 */
+interface Pair {
+  a: Sample & { color: string };
+  b: Sample & { color: string; flex: number };
+  size: number;
+}
+
+/**
+ * 인스턴스 속성 묶음. WebGL은 정점 속성을 16개까지만 쓸 수 있어 낱개 값은 vec4 두 개에 모았습니다.
+ * - miscA: 회전 속도, 크기, 처음 각도, 위상
+ * - miscB: 무작위 값, 곰↔사자를 오가는지(1/0), 갈기 끝에 가까운 정도, 전환이 시작되는 순서
+ */
+function allocate(total: number) {
+  return {
+    posA: new Float32Array(total * 3),
+    posB: new Float32Array(total * 3),
+    colA: new Float32Array(total * 3),
+    colB: new Float32Array(total * 3),
+    nrmA: new Float32Array(total * 3),
+    nrmB: new Float32Array(total * 3),
+    scatter: new Float32Array(total * 3),
+    axis: new Float32Array(total * 3),
+    miscA: new Float32Array(total * 4),
+    miscB: new Float32Array(total * 4),
+  };
+}
+type Attributes = ReturnType<typeof allocate>;
 
 /** 입자 자리(곰·사자)·색·크기 등을 한 번에 만듭니다. */
-function buildAttributes(counts: { shape: number; ambient: number }) {
+function buildAttributes(counts: { shape: number; ambient: number }): Attributes {
   const total = counts.shape + counts.ambient;
-  const posA = new Float32Array(total * 3);
-  const posB = new Float32Array(total * 3);
-  const colA = new Float32Array(total * 3);
-  const colB = new Float32Array(total * 3);
-  const scatter = new Float32Array(total * 3);
-  const size = new Float32Array(total);
-  const rot = new Float32Array(total);
-  const phase = new Float32Array(total);
-  const rand = new Float32Array(total);
-  const morph = new Float32Array(total); // 1이면 곰↔사자 사이를 오가는 입자
-  const axis = new Float32Array(total * 3);
-  const spin = new Float32Array(total);
+  const out = allocate(total);
+  const locks = makeLocks();
+
+  // 1) 얼굴 그림(눈·코·입…): 같은 갈래끼리 짝을 짓습니다.
+  const pairs: Pair[] = [];
+  const featureTotal = Math.round(counts.shape * 0.15);
+  for (const { kind, share } of FEATURES) {
+    for (let n = Math.round(featureTotal * share); n > 0; n--) {
+      pairs.push({
+        a: { ...onFront(bearParts, bearFeature(kind)), color: pickColor(FEATURE) },
+        b: { ...onFront(lionParts, lionFeature(kind)), color: pickColor(LION_FEATURE), flex: 0 },
+        size: 0.0065 + Math.random() * 0.005,
+      });
+    }
+  }
+
+  // 2) 겉면: 둘레의 각도 순서대로 짝을 지어, 가까운 자리끼리 옮겨 가게 합니다.
+  //    (아무렇게나 짝지으면 전환할 때 입자들이 서로 가로질러 뿌옇게 뭉개집니다)
+  const surfaceTotal = counts.shape - pairs.length;
+  const byAngle = <T extends Sample>(list: T[]) => list.sort((p, q) => Math.atan2(p.p[1], p.p[0]) - Math.atan2(q.p[1], q.p[0]));
+  const bears = byAngle(Array.from({ length: surfaceTotal }, bearSurface));
+  const lions = byAngle(Array.from({ length: surfaceTotal }, () => lionSurface(locks)));
+  for (let k = 0; k < surfaceTotal; k++) {
+    // 갈기는 굵게, 얼굴은 잘게 찍어 얼굴 굴곡이 뭉개지지 않게 합니다.
+    const size = lions[k].flex > 0 ? 0.011 + Math.random() * 0.011 : 0.008 + Math.random() * 0.008;
+    pairs.push({ a: bears[k], b: lions[k], size });
+  }
+
+  // 순서를 섞어 둡니다. (앞에서부터 일부만 골라도 형상 전체에 고르게 퍼지도록)
+  for (let k = pairs.length - 1; k > 0; k--) {
+    const j = Math.floor(Math.random() * (k + 1));
+    [pairs[k], pairs[j]] = [pairs[j], pairs[k]];
+  }
 
   let i = 0;
-  const common = () => {
-    rot[i] = Math.random() * Math.PI * 2;
-    phase[i] = Math.random() * Math.PI * 2;
-    rand[i] = Math.random();
-    axis.set(randomDirection(), i * 3);
+  const common = (size: number, morph: number, flex: number, delay: number) => {
+    out.axis.set(randomDirection(), i * 3);
     // 느리게 도는 것과 조금 빠른 것이 섞이고, 방향도 제각각
-    spin[i] = (0.25 + Math.random() * 0.9) * (Math.random() < 0.5 ? -1 : 1);
+    const spin = (0.25 + Math.random() * 0.9) * (Math.random() < 0.5 ? -1 : 1);
+    out.miscA.set([spin, size, Math.random() * Math.PI * 2, Math.random() * Math.PI * 2], i * 4);
+    out.miscB.set([Math.random(), morph, flex, delay], i * 4);
   };
 
   for (; i < counts.shape; i++) {
-    const bear = bearPoint();
-    const lion = lionPoint();
-    posA.set(bear.p, i * 3);
-    posB.set(lion.p, i * 3);
-    colA.set(hexToRgb(pickColor(bear.feature ? FEATURE : BEAR)), i * 3);
-    colB.set(hexToRgb(pickColor(lion.kind === "mane" ? MANE : lion.kind === "face" ? LION_FACE : FEATURE)), i * 3);
-    size[i] = 0.011 + Math.random() * 0.011;
-    morph[i] = 1;
-    common();
+    const { a, b, size } = pairs[i];
+    out.posA.set(a.p, i * 3);
+    out.posB.set(b.p, i * 3);
+    out.nrmA.set(a.n, i * 3);
+    out.nrmB.set(b.n, i * 3);
+    out.colA.set(hexToRgb(a.color), i * 3);
+    out.colB.set(hexToRgb(b.color), i * 3);
+    // 전환은 위에서 아래로 물결처럼 번집니다. (조금씩 어긋나게)
+    const sweep = Math.min(1, Math.max(0, 0.52 - a.p[1] * 0.42));
+    common(size, 1, b.flex, sweep * 0.82 + Math.random() * 0.18);
     // 바깥쪽·앞쪽으로 흩어지는 방향
-    const dir = Math.atan2(lion.p[1], lion.p[0]) + (Math.random() - 0.5) * 1.5;
+    const dir = Math.atan2(b.p[1], b.p[0]) + (Math.random() - 0.5) * 1.5;
     const far = 0.7 + Math.random() * 1.8;
-    scatter.set([Math.cos(dir) * far, Math.sin(dir) * far, (Math.random() - 0.25) * 1.8], i * 3);
+    out.scatter.set([Math.cos(dir) * far, Math.sin(dir) * far, (Math.random() - 0.25) * 1.8], i * 3);
   }
 
   // 주변에 떠 있는 작은 입자들
@@ -239,18 +497,19 @@ function buildAttributes(counts: { shape: number; ambient: number }) {
         if (Math.hypot(p[0], p[1]) * seen > 1.1) break;
       }
     }
-    posA.set(p, i * 3);
-    posB.set(p, i * 3);
+    out.posA.set(p, i * 3);
+    out.posB.set(p, i * 3);
+    out.nrmA.set([0, 0, 1], i * 3);
+    out.nrmB.set([0, 0, 1], i * 3);
     const c = hexToRgb(pickColor(AMBIENT));
-    colA.set(c, i * 3);
-    colB.set(c, i * 3);
+    out.colA.set(c, i * 3);
+    out.colB.set(c, i * 3);
     // 대부분 잘고, 가끔 조금 큰 것이 섞여 깊이가 느껴지게
-    size[i] = 0.006 + Math.random() ** 3 * 0.016;
-    common();
-    scatter.set([(Math.random() - 0.5) * 2, (Math.random() - 0.5) * 2, Math.random()], i * 3);
+    common(0.006 + Math.random() ** 3 * 0.016, 0, 0, 0);
+    out.scatter.set([(Math.random() - 0.5) * 2, (Math.random() - 0.5) * 2, Math.random()], i * 3);
   }
 
-  return { posA, posB, colA, colB, scatter, size, rot, phase, rand, morph, axis, spin };
+  return out;
 }
 
 /**
@@ -263,22 +522,15 @@ function buildAttributes(counts: { shape: number; ambient: number }) {
  */
 type SolidKind = "near" | "corner" | "ring" | "mid";
 
-function buildSolidAttributes(kinds: SolidKind[]) {
-  const total = kinds.length;
-  const pos = new Float32Array(total * 3);
-  const col = new Float32Array(total * 3);
-  const scatter = new Float32Array(total * 3);
-  const axis = new Float32Array(total * 3);
-  const spin = new Float32Array(total);
-  const size = new Float32Array(total);
-  const rot = new Float32Array(total);
-  const phase = new Float32Array(total);
-  const rand = new Float32Array(total);
-  const morph = new Float32Array(total); // 0: 곰↔사자에 끼지 않음
+function buildSolidAttributes(kinds: SolidKind[]): Attributes {
+  const out = allocate(kinds.length);
+  // 자리는 화면 비율에 맞춰 나중에 놓으므로, 곰일 때와 사자일 때가 같은 배열을 봅니다.
+  out.posB = out.posA;
+  out.colB = out.colA;
 
   kinds.forEach((kind, i) => {
-    col.set(hexToRgb(pickColor(AMBIENT)), i * 3);
-    size[i] =
+    out.colA.set(hexToRgb(pickColor(AMBIENT)), i * 3);
+    const size =
       kind === "near"
         ? 0.03 + Math.random() * 0.03
         : kind === "corner"
@@ -286,15 +538,16 @@ function buildSolidAttributes(kinds: SolidKind[]) {
           : kind === "ring"
             ? 0.015 + Math.random() ** 2 * 0.026
             : 0.016 + Math.random() * 0.022;
-    axis.set(randomDirection(), i * 3);
+    out.axis.set(randomDirection(), i * 3);
+    out.nrmA.set([0, 0, 1], i * 3);
+    out.nrmB.set([0, 0, 1], i * 3);
     // 아주 천천히 구릅니다.
-    spin[i] = (0.12 + Math.random() * 0.3) * (Math.random() < 0.5 ? -1 : 1);
-    rot[i] = Math.random() * Math.PI * 2;
-    phase[i] = Math.random() * Math.PI * 2;
-    rand[i] = Math.random();
-    scatter.set([(Math.random() - 0.5) * 2, (Math.random() - 0.5) * 2, Math.random()], i * 3);
+    const spin = (0.12 + Math.random() * 0.3) * (Math.random() < 0.5 ? -1 : 1);
+    out.miscA.set([spin, size, Math.random() * Math.PI * 2, Math.random() * Math.PI * 2], i * 4);
+    out.miscB.set([Math.random(), 0, 0, 0], i * 4); // 곰↔사자에 끼지 않음
+    out.scatter.set([(Math.random() - 0.5) * 2, (Math.random() - 0.5) * 2, Math.random()], i * 3);
   });
-  return { posA: pos, posB: pos, colA: col, colB: col, scatter, size, rot, phase, rand, morph, axis, spin };
+  return out;
 }
 
 /**
@@ -424,30 +677,37 @@ function frameGeometry() {
   return { position: new Float32Array([...outer, ...inner].flat()), index };
 }
 
+/** 빛무리용 네모 한 장 */
+function quadGeometry() {
+  return { position: new Float32Array([-1, -1, 0, 1, -1, 0, 1, 1, 0, -1, 1, 0]), index: [0, 1, 2, 0, 2, 3] };
+}
+
 const VERTEX = /* glsl */ `
   attribute vec3 aPosA;
   attribute vec3 aPosB;
+  attribute vec3 aNrmA;     // 곰일 때 표면의 바깥 방향
+  attribute vec3 aNrmB;     // 사자일 때 표면의 바깥 방향
   attribute vec3 aColor;
   attribute vec3 aColorB;
   attribute vec3 aScatter;
   attribute vec3 aAxis;     // 입자마다 다른 회전축
-  attribute float aSpin;    // 회전 속도
-  attribute float aSize;
-  attribute float aRot;
-  attribute float aPhase;
-  attribute float aRand;
-  attribute float aMorph;
+  attribute vec4 aMiscA;    // 회전 속도, 크기, 처음 각도, 위상
+  attribute vec4 aMiscB;    // 무작위 값, 곰↔사자를 오가는지, 갈기 끝에 가까운 정도, 전환 순서
 
   uniform float uTime;
   uniform float uMorph;     // 0 = 곰, 1 = 사자
   uniform float uScatter;
   uniform float uSizeBoost;
+  uniform float uScale;     // 형상 전체의 배율 (빛무리 크기를 맞출 때)
   uniform float uSolid;     // 1이면 두께가 있는 입체 도형
   uniform float uNear;
   uniform float uFar;
 
   varying vec3 vColor;
   varying float vAlpha;
+  #ifdef HALO
+    varying vec2 vUv;
+  #endif
 
   // 축 k를 중심으로 a만큼 돌립니다.
   vec3 turn(vec3 v, vec3 k, float a) {
@@ -457,17 +717,46 @@ const VERTEX = /* glsl */ `
   }
 
   void main() {
-    // 입자마다 조금씩 다른 때에 움직이기 시작합니다.
-    float t = clamp((uMorph - aRand * 0.32) / 0.68, 0.0, 1.0);
-    float e = t * t * (3.0 - 2.0 * t);
+    float aSpin = aMiscA.x;
+    float aSize = aMiscA.y;
+    float aRot = aMiscA.z;
+    float aPhase = aMiscA.w;
+    float aRand = aMiscB.x;
+    float aMorph = aMiscB.y;
+    float aFlex = aMiscB.z;
+    float aDelay = aMiscB.w;
+
+    // 전환은 위에서 아래로 번집니다: 순서가 빠른 입자부터 움직이고, 각자 전체 시간의 3분의 1만 씁니다.
+    // 그래서 중간에는 위쪽은 이미 사자, 아래쪽은 아직 곰인 채로 물결이 지나갑니다.
+    const float STAGGER = 2.0;
+    float t = clamp(uMorph * (1.0 + STAGGER) - aDelay * STAGGER, 0.0, 1.0);
+    float e = t * t * t * (t * (t * 6.0 - 15.0) + 10.0);
     float mid = sin(3.14159265 * t) * aMorph;
 
     vec3 p = mix(aPosA, aPosB, e * aMorph);
 
-    // 무너짐: 아래로 쏟아지며 옆으로 퍼졌다가 다시 올라옵니다.
-    p.y -= mid * (0.35 + aRand * 0.95);
-    p.x += sin(aPhase) * mid * (0.12 + aRand * 0.5);
-    p.z += cos(aPhase) * mid * (0.12 + aRand * 0.4);
+    // 사자의 갈기는 끝으로 갈수록 크게, 이웃한 털끼리 함께 바람에 일렁입니다.
+    float wind = e * aMorph * aFlex * aFlex;
+    float gust = dot(aPosB, vec3(1.9, 1.3, 1.1));
+    p += wind * vec3(
+      0.055 * sin(uTime * 0.9 + gust),
+      0.045 * sin(uTime * 0.7 + gust * 1.3 + 1.0),
+      0.06 * sin(uTime * 0.8 + gust * 0.8 + 2.0)
+    );
+    // 숨쉬듯 아주 조금 부풀었다 줄어듭니다.
+    p *= 1.0 + aMorph * 0.012 * sin(uTime * 0.85);
+
+    // 무너짐: 소용돌이치며 아래로 쏟아졌다가 다시 올라옵니다.
+    // 가까운 입자끼리는 같은 흐름을 타서, 뿌옇게 흩어지지 않고 줄기를 이루며 움직입니다.
+    float swirl = mid * (0.2 + aRand * 0.45);
+    float cs = cos(swirl);
+    float sn = sin(swirl);
+    p.xz = vec2(p.x * cs - p.z * sn, p.x * sn + p.z * cs);
+    vec3 q = aPosA * 1.9 + uTime * 0.35;
+    p += vec3(sin(q.y + q.z * 1.3), sin(q.z + q.x * 1.3), sin(q.x + q.y * 1.3)) * mid * 0.17;
+    p.y -= mid * (0.1 + aRand * 0.34);
+    p.x += sin(aPhase) * mid * aRand * 0.14;
+    p.z += cos(aPhase) * mid * aRand * 0.14;
 
     // 주변 입자는 넓게, 천천히 떠다닙니다.
     float drift = 1.0 - aMorph;
@@ -475,31 +764,68 @@ const VERTEX = /* glsl */ `
     p.y += drift * 0.18 * cos(uTime * 0.09 + aPhase * 2.3);
     p.z += drift * 0.2 * sin(uTime * 0.07 + aPhase * 3.1);
 
-    // 표면을 따라 미세하게 흐르는 움직임
-    p.x += 0.014 * sin(uTime * 0.55 + aPhase);
-    p.y += 0.014 * cos(uTime * 0.47 + aPhase * 1.31);
-    p.z += 0.02 * sin(uTime * 0.38 + aPhase * 2.17);
+    // 표면을 따라 미세하게 흐르는 움직임 (형상은 또렷하게 남도록 더 작게)
+    float wobble = mix(1.0, 0.5, aMorph);
+    p.x += wobble * 0.014 * sin(uTime * 0.55 + aPhase);
+    p.y += wobble * 0.014 * cos(uTime * 0.47 + aPhase * 1.31);
+    p.z += wobble * 0.02 * sin(uTime * 0.38 + aPhase * 2.17);
 
     // 스크롤하면 바깥으로 흩어집니다.
     float s = uScatter * uScatter;
     p += aScatter * s * 2.8;
 
-    // 삼각형 틀 자체가 3D 공간에서 제 축을 따라 돕니다. 무너지는 동안에는 더 빨리 구릅니다.
-    float angle = aRot + uTime * aSpin + mid * 5.0;
-    vec3 corner = turn(position, aAxis, angle) * aSize * uSizeBoost;
-    #ifdef SOLID
-      vec3 facingNormal = turn(normal, aAxis, angle);
+    // 형상의 입자: 표면에 얹힌 채 까딱거리고, 표면이 받는 빛에 따라 밝기가 달라집니다.
+    float shade = 1.0;
+    vec3 surface = vec3(0.0, 0.0, 1.0);
+    if (aMorph > 0.5) {
+      surface = normalize(mix(aNrmA, aNrmB, e));
+      vec3 nv = normalize(normalMatrix * surface);
+      // 왼쪽 위 앞에서 비추는 빛 + 윤곽을 따라 도는 빛. 뒤통수 쪽은 어둡게 가라앉힙니다.
+      float lit = 0.5 + 0.5 * dot(nv, normalize(vec3(-0.35, 0.55, 0.75)));
+      float front = smoothstep(-0.55, 0.2, nv.z);
+      float rim = pow(1.0 - abs(nv.z), 3.0);
+      shade = mix(1.0, (0.3 + 0.8 * lit * lit) * mix(0.3, 1.0, front) + 0.35 * rim, 1.0 - mid);
+      // 사자는 갈기까지 넓게 퍼져 입자가 성기므로 그만큼 밝게 그립니다.
+      shade *= 1.0 + 0.45 * e;
+    }
+
+    #ifdef HALO
+      // 빛무리: 늘 카메라를 보는 부드러운 원
+      vec4 mv = modelViewMatrix * vec4(p, 1.0);
+      mv.xy += position.xy * aSize * uSizeBoost * uScale * 7.0;
+      vUv = position.xy;
+      float facing = 0.045;
     #else
-      vec3 facingNormal = turn(vec3(0.0, 0.0, 1.0), aAxis, angle);
+      // 삼각형 틀 자체가 3D 공간에서 제 축을 따라 돕니다. 무너지는 동안에는 더 빨리 구릅니다.
+      vec3 corner;
+      vec3 facingNormal;
+      if (aMorph > 0.5) {
+        vec3 ref = abs(surface.y) < 0.95 ? vec3(0.0, 1.0, 0.0) : vec3(1.0, 0.0, 0.0);
+        vec3 t1 = normalize(cross(ref, surface));
+        vec3 t2 = cross(surface, t1);
+        float c = cos(aRot);
+        float d = sin(aRot);
+        vec3 flatOn = t1 * (position.x * c - position.y * d) + t2 * (position.x * d + position.y * c);
+        float rock = (aRand - 0.5) * 1.5 + 0.5 * sin(uTime * aSpin * 1.4 + aPhase) + mid * 5.0;
+        corner = turn(flatOn, aAxis, rock);
+        facingNormal = turn(surface, aAxis, rock);
+      } else {
+        float angle = aRot + uTime * aSpin;
+        corner = turn(position, aAxis, angle);
+        #ifdef SOLID
+          facingNormal = turn(normal, aAxis, angle);
+        #else
+          facingNormal = turn(vec3(0.0, 0.0, 1.0), aAxis, angle);
+        #endif
+      }
+      vec4 mv = modelViewMatrix * vec4(p + corner * aSize * uSizeBoost, 1.0);
+
+      // 정면을 향한 면은 밝게, 옆으로 누운 면은 어둡게 (최소 0.25)
+      vec3 n = normalize(normalMatrix * facingNormal);
+      vec3 toEye = normalize(-mv.xyz);
+      float facing = max(0.25, abs(dot(n, toEye)));
     #endif
-
-    vec4 mv = modelViewMatrix * vec4(p + corner, 1.0);
     gl_Position = projectionMatrix * mv;
-
-    // 정면을 향한 면은 밝게, 옆으로 누운 면은 어둡게 (최소 0.25)
-    vec3 n = normalize(normalMatrix * facingNormal);
-    vec3 toEye = normalize(-mv.xyz);
-    float facing = max(0.25, abs(dot(n, toEye)));
 
     // 멀수록 어둡고 투명하게
     float fog = smoothstep(uFar, uNear, -mv.z);
@@ -507,8 +833,9 @@ const VERTEX = /* glsl */ `
     float ambient = mix(0.42 + 0.3 * sin(uTime * 1.3 + aPhase * 5.0), 1.0, aMorph);
     // 입체 도형은 반짝이지 않고, 면의 밝기 차이로 입체감을 냅니다.
     ambient = mix(ambient, 0.42, uSolid);
-    vAlpha = mix(0.1, 0.95, fog) * ambient * facing * (1.0 - smoothstep(0.08, 0.9, uScatter));
-    vColor = mix(aColor, aColorB, e);
+    vAlpha = mix(0.1, 0.95, fog) * ambient * facing * shade * (1.0 + 0.3 * mid) * (1.0 - smoothstep(0.08, 0.9, uScatter));
+    // 옮겨 가는 동안에는 달궈진 듯 밝은 금빛을 띱니다.
+    vColor = mix(mix(aColor, aColorB, e), vec3(1.0, 0.84, 0.55), mid * 0.3);
   }
 `;
 
@@ -517,10 +844,18 @@ const FRAGMENT = /* glsl */ `
 
   varying vec3 vColor;
   varying float vAlpha;
+  #ifdef HALO
+    varying vec2 vUv;
+  #endif
 
   void main() {
-    if (vAlpha < 0.01) discard;
-    gl_FragColor = vec4(vColor, vAlpha);
+    float alpha = vAlpha;
+    #ifdef HALO
+      float glow = max(0.0, 1.0 - length(vUv));
+      alpha *= glow * glow;
+    #endif
+    if (alpha < 0.004) discard;
+    gl_FragColor = vec4(vColor, alpha);
   }
 `;
 
@@ -574,15 +909,16 @@ export function ParticleEmblem({
           uSizeBoost: { value: 1 },
           uNear: { value: CAMERA_Z - 1 },
           uFar: { value: CAMERA_Z + 1 },
+          uScale: { value: 1 },
         };
         const disposables: { dispose: () => void }[] = [];
 
         /** 도형 하나를 입자 수만큼 한 번에 그리는 메시 (드로우콜 1번, 입자별 값은 인스턴스 속성으로) */
         const instancedMesh = (
           base: { position: Float32Array; normal?: Float32Array; index?: number[] },
-          attrs: ReturnType<typeof buildAttributes>,
+          attrs: Attributes,
           range: [number, number],
-          solid: boolean,
+          mode: "flat" | "solid" | "halo",
           sizeUniform = shared.uSizeBoost,
         ) => {
           const [from, to] = range;
@@ -602,16 +938,14 @@ export function ParticleEmblem({
           instanced("aColorB", attrs.colB, 3);
           instanced("aScatter", attrs.scatter, 3);
           instanced("aAxis", attrs.axis, 3);
-          instanced("aSpin", attrs.spin, 1);
-          instanced("aSize", attrs.size, 1);
-          instanced("aRot", attrs.rot, 1);
-          instanced("aPhase", attrs.phase, 1);
-          instanced("aRand", attrs.rand, 1);
-          instanced("aMorph", attrs.morph, 1);
+          instanced("aNrmA", attrs.nrmA, 3);
+          instanced("aNrmB", attrs.nrmB, 3);
+          instanced("aMiscA", attrs.miscA, 4);
+          instanced("aMiscB", attrs.miscB, 4);
 
           const material = new THREE.ShaderMaterial({
-            uniforms: { ...shared, uSizeBoost: sizeUniform, uSolid: { value: solid ? 1 : 0 } },
-            defines: solid ? { SOLID: 1 } : {},
+            uniforms: { ...shared, uSizeBoost: sizeUniform, uSolid: { value: mode === "solid" ? 1 : 0 } },
+            defines: mode === "solid" ? { SOLID: 1 } : mode === "halo" ? { HALO: 1 } : {},
             vertexShader: VERTEX,
             fragmentShader: FRAGMENT,
             transparent: true,
@@ -630,7 +964,9 @@ export function ParticleEmblem({
         const pivot = new THREE.Group();
         // 1) 형상과 주변의 작은 입자: 납작한 삼각형 틀
         const flat = buildAttributes(counts);
-        pivot.add(instancedMesh(frameGeometry(), flat, [0, flat.size.length], false));
+        // 형상 입자 일부의 뒤에 깔리는 부드러운 빛무리: 입자가 촘촘한 곳일수록 은은하게 번집니다.
+        pivot.add(instancedMesh(quadGeometry(), flat, [0, Math.round(counts.shape * HALO_SHARE)], "halo"));
+        pivot.add(instancedMesh(frameGeometry(), flat, [0, counts.shape + counts.ambient], "flat"));
         // 2) 떠다니는 큰 도형: 두께가 있는 삼각형 틀 2/3, 정사면체 뼈대 1/3.
         //    고개를 따라 돌지 않도록 pivot 밖에 두고, 곰·사자가 있는 곳은 비워 둡니다.
         const solidSize = { value: 1 };
@@ -646,7 +982,7 @@ export function ParticleEmblem({
           { base: tetraGeometry(), kinds: kindsFor(1 / 3) },
         ].map(({ base, kinds }) => {
           const attrs = buildSolidAttributes(kinds);
-          const mesh = instancedMesh(base, attrs, [0, kinds.length], true, solidSize);
+          const mesh = instancedMesh(base, attrs, [0, kinds.length], "solid", solidSize);
           solidsGroup.add(mesh);
           return { kinds, attrs, mesh, spots: null as null | { u: number; v: number; z: number }[] };
         });
@@ -688,6 +1024,7 @@ export function ParticleEmblem({
           camera.setViewOffset(width, height, -(place.cx - 0.5) * width, -(place.cy - 0.5) * height, width, height);
           // 좁은 화면에서는 형태가 작아지는 만큼 입자를 조금 키워 틀이 보이게 합니다.
           uniforms.uSizeBoost.value = narrow ? 1.7 : 1;
+          uniforms.uScale.value = scale;
           // 입체 도형: 화면 위 자리를 그 깊이의 월드 좌표로 옮깁니다.
           solidSize.value = scale * (narrow ? 1.5 : 1);
           const headRadius = (place.size * (narrow ? width : height)) / 2;
