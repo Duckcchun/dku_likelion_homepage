@@ -15,7 +15,9 @@ import emblemSrc from "../assets/emblem-lion-bear.webp";
  * - 전환은 위에서 아래로 물결처럼 번집니다. 눈은 눈으로, 코는 코로, 겉면은 가까운 자리끼리 짝지어 옮겨 갑니다.
  * - 형상 입자 일부에는 부드러운 빛무리를 깔아, 촘촘한 곳이 은은하게 번집니다. (후처리 없이 입자만으로)
  * - 입자 하나하나가 3D 공간에서 제 축을 따라 도는 진짜 삼각형 틀입니다. 정면을 향하면 밝고, 옆으로 누우면 어둡습니다.
- * - 주변을 떠다니는 큰 도형은 두께가 있는 입체(삼각형 틀, 정사면체 뼈대)이고, 면마다 밝기가 달라 덩어리로 보입니다.
+ * - 주변을 떠다니는 큰 도형(삼각형 틀, 정사면체 뼈대)은 수를 줄이고 대부분 어둡게 가라앉혔습니다.
+ *   곰·사자에 초점이 맞아 있어 그보다 앞이나 뒤에 있는 도형은 흐려지고, 모두 같은 느린 흐름을 탑니다.
+ *   마우스를 움직이면 가까운 도형일수록 더 많이 밀리고(시차), 포인터 곁에서는 살짝 비켜납니다.
  * - 가까운 입자는 크고 밝게, 먼 입자는 작고 어둡게 그려 깊이를 만듭니다.
  * - 마우스가 움직이면 고개를 돌려 포인터를 쳐다보고, 가만히 있으면 천천히 좌우로 둘러봅니다.
  * - 주변에는 작은 입자들이 떠다니며 반짝이고, 뒤에서는 지금 동물의 색(블루/오렌지)이 은은하게 번집니다.
@@ -26,8 +28,8 @@ import emblemSrc from "../assets/emblem-lion-bear.webp";
  */
 
 const COUNT = {
-  desktop: { shape: 11000, ambient: 1900, solidsNear: 12, solidsCorner: 18, solidsRing: 30, solidsMid: 54 },
-  mobile: { shape: 3600, ambient: 560, solidsNear: 4, solidsCorner: 7, solidsRing: 10, solidsMid: 17 },
+  desktop: { shape: 11000, ambient: 1900, solidsNear: 6, solidsCorner: 10, solidsRing: 16, solidsMid: 26 },
+  mobile: { shape: 3600, ambient: 560, solidsNear: 2, solidsCorner: 3, solidsRing: 5, solidsMid: 8 },
 };
 
 /** 화면 안에서의 자리와 크기. cx·cy는 화면 비율, size는 화면 높이(모바일은 너비) 대비 전체 지름 */
@@ -530,21 +532,23 @@ function buildSolidAttributes(kinds: SolidKind[]): Attributes {
 
   kinds.forEach((kind, i) => {
     out.colA.set(hexToRgb(pickColor(AMBIENT)), i * 3);
+    // 크기 차이를 크게: 카메라 앞의 몇 개는 아주 크고, 나머지는 대부분 작습니다.
     const size =
       kind === "near"
-        ? 0.03 + Math.random() * 0.03
+        ? 0.05 + Math.random() * 0.06
         : kind === "corner"
-          ? 0.018 + Math.random() ** 2 * 0.04
+          ? 0.016 + Math.random() ** 2 * 0.045
           : kind === "ring"
-            ? 0.015 + Math.random() ** 2 * 0.026
-            : 0.016 + Math.random() * 0.022;
+            ? 0.012 + Math.random() ** 2 * 0.024
+            : 0.012 + Math.random() ** 2 * 0.03;
     out.axis.set(randomDirection(), i * 3);
-    out.nrmA.set([0, 0, 1], i * 3);
-    out.nrmB.set([0, 0, 1], i * 3);
     // 아주 천천히 구릅니다.
-    const spin = (0.12 + Math.random() * 0.3) * (Math.random() < 0.5 ? -1 : 1);
+    const spin = (0.05 + Math.random() * 0.15) * (Math.random() < 0.5 ? -1 : 1);
     out.miscA.set([spin, size, Math.random() * Math.PI * 2, Math.random() * Math.PI * 2], i * 4);
-    out.miscB.set([Math.random(), 0, 0, 0], i * 4); // 곰↔사자에 끼지 않음
+    // 삼각형 틀 2/3, 정사면체 뼈대 1/3. 넷 중 하나만 또렷하게 빛나고 나머지는 어둡게 가라앉힙니다.
+    const shape = Math.random() < 2 / 3 ? 0 : 1;
+    const brightness = Math.random() < 0.3 ? 1 : 0.4 + Math.random() * 0.3;
+    out.miscB.set([Math.random(), 0, shape, brightness], i * 4);
     out.scatter.set([(Math.random() - 0.5) * 2, (Math.random() - 0.5) * 2, Math.random()], i * 3);
   });
   return out;
@@ -588,69 +592,6 @@ function pickSpot(
     return { u, v, z };
   }
   return { u: 0.03, v: 0.95, z: 0 };
-}
-
-/** a에서 b까지 이어지는 네모난 막대 (면마다 법선이 따로 있는 삼각형 12개) */
-function bar(a: Vec3, b: Vec3, thickness: number, position: number[], normal: number[]) {
-  const d: Vec3 = [b[0] - a[0], b[1] - a[1], b[2] - a[2]];
-  const len = Math.hypot(...d);
-  const w: Vec3 = [d[0] / len, d[1] / len, d[2] / len];
-  // 막대 방향과 수직인 두 축
-  const ref: Vec3 = Math.abs(w[2]) < 0.9 ? [0, 0, 1] : [1, 0, 0];
-  const cross = (p: Vec3, q: Vec3): Vec3 => [p[1] * q[2] - p[2] * q[1], p[2] * q[0] - p[0] * q[2], p[0] * q[1] - p[1] * q[0]];
-  const unit = (p: Vec3): Vec3 => {
-    const l = Math.hypot(...p);
-    return [p[0] / l, p[1] / l, p[2] / l];
-  };
-  const u = unit(cross(w, ref));
-  const v = cross(w, u);
-  const h = thickness / 2;
-  // 모서리가 맞물리도록 양 끝을 막대 두께의 절반만큼 늘립니다.
-  const corner = (end: Vec3, su: number, sv: number, sw: number): Vec3 => [
-    end[0] + u[0] * h * su + v[0] * h * sv + w[0] * h * sw,
-    end[1] + u[1] * h * su + v[1] * h * sv + w[1] * h * sw,
-    end[2] + u[2] * h * su + v[2] * h * sv + w[2] * h * sw,
-  ];
-  const A = (su: number, sv: number) => corner(a, su, sv, -1);
-  const B = (su: number, sv: number) => corner(b, su, sv, 1);
-  const quad = (p0: Vec3, p1: Vec3, p2: Vec3, p3: Vec3, n: Vec3) => {
-    position.push(...p0, ...p1, ...p2, ...p0, ...p2, ...p3);
-    for (let k = 0; k < 6; k++) normal.push(...n);
-  };
-  const neg = (p: Vec3): Vec3 => [-p[0], -p[1], -p[2]];
-  quad(A(1, -1), B(1, -1), B(1, 1), A(1, 1), u);
-  quad(A(-1, 1), B(-1, 1), B(-1, -1), A(-1, -1), neg(u));
-  quad(A(1, 1), B(1, 1), B(-1, 1), A(-1, 1), v);
-  quad(A(-1, -1), B(-1, -1), B(1, -1), A(1, -1), neg(v));
-  quad(B(1, -1), B(-1, -1), B(-1, 1), B(1, 1), w);
-  quad(A(1, 1), A(-1, 1), A(-1, -1), A(1, -1), neg(w));
-}
-
-/** 두께가 있는 삼각형 틀: 네모 막대 3개 */
-function solidFrameGeometry() {
-  const position: number[] = [];
-  const normal: number[] = [];
-  const pts: Vec3[] = [0, 1, 2].map((k) => {
-    const a = Math.PI / 2 + (k * Math.PI * 2) / 3;
-    return [Math.cos(a), Math.sin(a), 0];
-  });
-  for (let k = 0; k < 3; k++) bar(pts[k], pts[(k + 1) % 3], Math.sqrt(3) * FRAME_THICKNESS, position, normal);
-  return { position: new Float32Array(position), normal: new Float32Array(normal) };
-}
-
-/** 정사면체 뼈대: 모서리 6개를 네모 막대로 */
-function tetraGeometry() {
-  const position: number[] = [];
-  const normal: number[] = [];
-  const k = 1 / Math.sqrt(3);
-  const pts: Vec3[] = [
-    [k, k, k],
-    [k, -k, -k],
-    [-k, k, -k],
-    [-k, -k, k],
-  ];
-  for (let i = 0; i < 4; i++) for (let j = i + 1; j < 4; j++) bar(pts[i], pts[j], 0.11, position, normal);
-  return { position: new Float32Array(position), normal: new Float32Array(normal) };
 }
 
 /**
@@ -699,7 +640,6 @@ const VERTEX = /* glsl */ `
   uniform float uScatter;
   uniform float uSizeBoost;
   uniform float uScale;     // 형상 전체의 배율 (빛무리 크기를 맞출 때)
-  uniform float uSolid;     // 1이면 두께가 있는 입체 도형
   uniform float uNear;
   uniform float uFar;
 
@@ -812,11 +752,7 @@ const VERTEX = /* glsl */ `
       } else {
         float angle = aRot + uTime * aSpin;
         corner = turn(position, aAxis, angle);
-        #ifdef SOLID
-          facingNormal = turn(normal, aAxis, angle);
-        #else
-          facingNormal = turn(vec3(0.0, 0.0, 1.0), aAxis, angle);
-        #endif
+        facingNormal = turn(vec3(0.0, 0.0, 1.0), aAxis, angle);
       }
       vec4 mv = modelViewMatrix * vec4(p + corner * aSize * uSizeBoost, 1.0);
 
@@ -831,8 +767,6 @@ const VERTEX = /* glsl */ `
     float fog = smoothstep(uFar, uNear, -mv.z);
     // 주변 입자는 조금 어둡게, 저마다 다른 박자로 반짝입니다.
     float ambient = mix(0.42 + 0.3 * sin(uTime * 1.3 + aPhase * 5.0), 1.0, aMorph);
-    // 입체 도형은 반짝이지 않고, 면의 밝기 차이로 입체감을 냅니다.
-    ambient = mix(ambient, 0.42, uSolid);
     vAlpha = mix(0.1, 0.95, fog) * ambient * facing * shade * (1.0 + 0.3 * mid) * (1.0 - smoothstep(0.08, 0.9, uScatter));
     // 옮겨 가는 동안에는 달궈진 듯 밝은 금빛을 띱니다.
     vColor = mix(mix(aColor, aColorB, e), vec3(1.0, 0.84, 0.55), mid * 0.3);
@@ -856,6 +790,148 @@ const FRAGMENT = /* glsl */ `
     #endif
     if (alpha < 0.004) discard;
     gl_FragColor = vec4(vColor, alpha);
+  }
+`;
+
+/**
+ * 떠다니는 큰 도형(삼각형 틀·정사면체 뼈대)의 셰이더.
+ * 도형마다 카메라를 보는 네모 한 장을 깔고, 그 안에서 모서리 선까지의 거리를 재어 선을 그립니다.
+ * 선을 이렇게 그리면 초점에서 벗어난 만큼 선을 부드럽게 퍼뜨릴 수 있어서,
+ * 곰·사자(초점)보다 앞이나 뒤에 있는 도형이 사진처럼 흐려집니다. (후처리 없이)
+ */
+const SOLID_VERTEX = /* glsl */ `
+  attribute vec3 aPosA;
+  attribute vec3 aColor;
+  attribute vec3 aScatter;
+  attribute vec3 aAxis;
+  attribute vec4 aMiscA;    // 회전 속도, 크기, 처음 각도, 위상
+  attribute vec4 aMiscB;    // 무작위 값, (안 씀), 모양(0 삼각형 틀, 1 정사면체), 밝기
+
+  uniform float uTime;
+  uniform float uScatter;
+  uniform float uSizeBoost;
+  uniform float uNear;
+  uniform float uFar;
+  uniform float uFocus;         // 초점이 맞는 거리 (곰·사자가 있는 곳)
+  uniform float uAperture;      // 초점에서 벗어날 때 흐려지는 정도
+  uniform float uPixel;         // 거리 1에서 화면 1픽셀의 크기
+  uniform float uAspect;
+  uniform vec2 uPointer;        // 포인터 자리 (-1~1, 위가 +)
+  uniform float uPointerWeight; // 포인터가 움직이는 동안 1
+
+  varying vec4 vAB;     // 꼭짓점 A, B의 화면상 자리 (도형 반지름 = 1)
+  varying vec4 vCD;
+  varying vec4 vDepth;  // 꼭짓점마다 카메라 쪽으로 나온 정도
+  varying vec4 vInfo;   // 이 픽셀의 자리(xy), 흐림, 픽셀 크기
+  varying vec4 vTint;   // 색, 밝기
+  varying float vShape;
+
+  vec3 turn(vec3 v, vec3 k, float a) {
+    float c = cos(a);
+    float s = sin(a);
+    return v * c + cross(k, v) * s + k * dot(k, v) * (1.0 - c);
+  }
+
+  void main() {
+    float size = aMiscA.y * uSizeBoost;
+    float phase = aMiscA.w;
+
+    // 모두 같은 느린 흐름을 타고, 그 위에 저마다의 작은 흔들림이 얹힙니다.
+    vec3 p = aPosA;
+    p.x += 0.2 * sin(uTime * 0.07 + aPosA.y * 0.9 + 1.3) + 0.05 * sin(uTime * 0.11 + phase);
+    p.y += 0.16 * sin(uTime * 0.06 + aPosA.x * 0.7) + 0.05 * cos(uTime * 0.09 + phase * 1.7);
+    p.z += 0.12 * sin(uTime * 0.05 + aPosA.x * 0.5 + aPosA.y * 0.6);
+    p += aScatter * uScatter * uScatter * 2.8;
+
+    vec4 mv = modelViewMatrix * vec4(p, 1.0);
+    float dist = -mv.z;
+    float nearness = clamp((uFocus + 1.6 - dist) / 3.5, 0.0, 1.0);
+
+    // 시차: 가까운 도형일수록 포인터 반대쪽으로 더 많이 밀립니다.
+    mv.xy -= uPointer * uPointerWeight * (0.02 + 0.11 * nearness * nearness);
+
+    // 도형의 꼭짓점을 제 축으로 돌립니다.
+    float angle = aMiscA.z + uTime * aMiscA.x;
+    float shape = aMiscB.z;
+    const float K = 0.57735;
+    vec3 A = turn(mix(vec3(0.0, 1.0, 0.0), vec3(K, K, K), shape), aAxis, angle);
+    vec3 B = turn(mix(vec3(-0.866, -0.5, 0.0), vec3(K, -K, -K), shape), aAxis, angle);
+    vec3 C = turn(mix(vec3(0.866, -0.5, 0.0), vec3(-K, K, -K), shape), aAxis, angle);
+    vec3 D = turn(vec3(-K, -K, K), aAxis, angle);
+    vAB = vec4(A.xy, B.xy);
+    vCD = vec4(C.xy, D.xy);
+    vDepth = vec4(A.z, B.z, C.z, D.z);
+    vShape = shape;
+
+    // 초점에서 벗어난 만큼 흐려집니다. (도형 반지름을 1로 본 단위)
+    float blur = min(abs(dist - uFocus) * uAperture / size, 1.4);
+    float px = uPixel * dist / size;
+    float reach = 1.3 + blur * 1.6 + px * 2.0;
+    vInfo = vec4(position.xy * reach, blur, px);
+
+    vec4 center = projectionMatrix * mv;
+    mv.xy += position.xy * reach * size;
+    gl_Position = projectionMatrix * mv;
+
+    // 포인터가 가까이 오면 살짝 밀려납니다.
+    vec2 away = (center.xy / center.w - uPointer) * vec2(uAspect, 1.0);
+    float gap = length(away);
+    vec2 push = away / max(gap, 0.0001) * (1.0 - smoothstep(0.0, 0.45, gap)) * 0.07 * uPointerWeight * (0.4 + nearness);
+    push.x /= uAspect;
+    gl_Position.xy += push * gl_Position.w;
+
+    float fog = smoothstep(uFar, uNear, dist);
+    vTint = vec4(aColor, mix(0.45, 1.0, fog) * aMiscB.w * (1.0 - smoothstep(0.08, 0.9, uScatter)));
+  }
+`;
+
+const SOLID_FRAGMENT = /* glsl */ `
+  precision mediump float;
+
+  varying vec4 vAB;
+  varying vec4 vCD;
+  varying vec4 vDepth;
+  varying vec4 vInfo;
+  varying vec4 vTint;
+  varying float vShape;
+
+  // 모서리 하나의 밝기: 선에서 멀어질수록 어두워지고, 카메라에서 먼 모서리는 조금 어둡습니다.
+  float edge(vec2 p, vec2 a, vec2 b, float za, float zb, float width, float soft, float energy) {
+    vec2 pa = p - a;
+    vec2 ba = b - a;
+    float d = length(pa - ba * clamp(dot(pa, ba) / dot(ba, ba), 0.0, 1.0));
+    float line = 1.0 - smoothstep(max(width - soft, 0.0), width + soft, d);
+    // 선 둘레로 옅게 번지는 빛
+    float spread = 0.16 + soft;
+    float glow = 0.14 * exp(-d * d / (spread * spread));
+    float depth = 0.55 + 0.45 * smoothstep(-0.8, 0.8, (za + zb) * 0.5);
+    return (line * energy + glow) * depth;
+  }
+
+  void main() {
+    vec2 p = vInfo.xy;
+    float blur = vInfo.z;
+    float width = mix(0.07, 0.05, vShape);
+    float soft = blur + vInfo.w;
+    // 퍼진 만큼 옅어져서, 흐린 도형이 선명한 도형보다 눈에 띄지 않습니다.
+    float energy = width / (width + blur * 0.3);
+
+    vec2 A = vAB.xy;
+    vec2 B = vAB.zw;
+    vec2 C = vCD.xy;
+    vec2 D = vCD.zw;
+    float light = edge(p, A, B, vDepth.x, vDepth.y, width, soft, energy);
+    light = max(light, edge(p, B, C, vDepth.y, vDepth.z, width, soft, energy));
+    light = max(light, edge(p, C, A, vDepth.z, vDepth.x, width, soft, energy));
+    if (vShape > 0.5) {
+      light = max(light, edge(p, A, D, vDepth.x, vDepth.w, width, soft, energy));
+      light = max(light, edge(p, B, D, vDepth.y, vDepth.w, width, soft, energy));
+      light = max(light, edge(p, C, D, vDepth.z, vDepth.w, width, soft, energy));
+    }
+
+    float alpha = light * vTint.a;
+    if (alpha < 0.003) discard;
+    gl_FragColor = vec4(vTint.rgb, alpha);
   }
 `;
 
@@ -915,16 +991,15 @@ export function ParticleEmblem({
 
         /** 도형 하나를 입자 수만큼 한 번에 그리는 메시 (드로우콜 1번, 입자별 값은 인스턴스 속성으로) */
         const instancedMesh = (
-          base: { position: Float32Array; normal?: Float32Array; index?: number[] },
+          base: { position: Float32Array; index?: number[] },
           attrs: Attributes,
           range: [number, number],
-          mode: "flat" | "solid" | "halo",
-          sizeUniform = shared.uSizeBoost,
+          mode: "flat" | "halo" | "solid",
+          extraUniforms: Record<string, { value: unknown }> = {},
         ) => {
           const [from, to] = range;
           const geometry = new THREE.InstancedBufferGeometry();
           geometry.setAttribute("position", new THREE.BufferAttribute(base.position, 3));
-          if (base.normal) geometry.setAttribute("normal", new THREE.BufferAttribute(base.normal, 3));
           if (base.index) geometry.setIndex(base.index);
           geometry.instanceCount = to - from;
           const instanced = (name: string, array: Float32Array, itemSize: number) =>
@@ -944,10 +1019,10 @@ export function ParticleEmblem({
           instanced("aMiscB", attrs.miscB, 4);
 
           const material = new THREE.ShaderMaterial({
-            uniforms: { ...shared, uSizeBoost: sizeUniform, uSolid: { value: mode === "solid" ? 1 : 0 } },
-            defines: mode === "solid" ? { SOLID: 1 } : mode === "halo" ? { HALO: 1 } : {},
-            vertexShader: VERTEX,
-            fragmentShader: FRAGMENT,
+            uniforms: { ...shared, ...extraUniforms },
+            defines: mode === "halo" ? { HALO: 1 } : {},
+            vertexShader: mode === "solid" ? SOLID_VERTEX : VERTEX,
+            fragmentShader: mode === "solid" ? SOLID_FRAGMENT : FRAGMENT,
             transparent: true,
             depthTest: false,
             depthWrite: false,
@@ -967,25 +1042,28 @@ export function ParticleEmblem({
         // 형상 입자 일부의 뒤에 깔리는 부드러운 빛무리: 입자가 촘촘한 곳일수록 은은하게 번집니다.
         pivot.add(instancedMesh(quadGeometry(), flat, [0, Math.round(counts.shape * HALO_SHARE)], "halo"));
         pivot.add(instancedMesh(frameGeometry(), flat, [0, counts.shape + counts.ambient], "flat"));
-        // 2) 떠다니는 큰 도형: 두께가 있는 삼각형 틀 2/3, 정사면체 뼈대 1/3.
+        // 2) 떠다니는 큰 도형: 삼각형 틀과 정사면체 뼈대.
         //    고개를 따라 돌지 않도록 pivot 밖에 두고, 곰·사자가 있는 곳은 비워 둡니다.
-        const solidSize = { value: 1 };
-        const solidsGroup = new THREE.Group();
-        const kindsFor = (share: number): SolidKind[] => [
-          ...Array<SolidKind>(Math.round(counts.solidsNear * share)).fill("near"),
-          ...Array<SolidKind>(Math.round(counts.solidsCorner * share)).fill("corner"),
-          ...Array<SolidKind>(Math.round(counts.solidsRing * share)).fill("ring"),
-          ...Array<SolidKind>(Math.round(counts.solidsMid * share)).fill("mid"),
+        const solidUniforms = {
+          uSizeBoost: { value: 1 },
+          uFocus: { value: CAMERA_Z },
+          uAperture: { value: 0.012 },
+          uPixel: { value: 0.001 },
+          uAspect: { value: 1 },
+          uPointer: { value: [0, 0] },
+          uPointerWeight: { value: 0 },
+        };
+        const solidKinds: SolidKind[] = [
+          ...Array<SolidKind>(counts.solidsNear).fill("near"),
+          ...Array<SolidKind>(counts.solidsCorner).fill("corner"),
+          ...Array<SolidKind>(counts.solidsRing).fill("ring"),
+          ...Array<SolidKind>(counts.solidsMid).fill("mid"),
         ];
-        const solidSets = [
-          { base: solidFrameGeometry(), kinds: kindsFor(2 / 3) },
-          { base: tetraGeometry(), kinds: kindsFor(1 / 3) },
-        ].map(({ base, kinds }) => {
-          const attrs = buildSolidAttributes(kinds);
-          const mesh = instancedMesh(base, attrs, [0, kinds.length], "solid", solidSize);
-          solidsGroup.add(mesh);
-          return { kinds, attrs, mesh, spots: null as null | { u: number; v: number; z: number }[] };
-        });
+        const solidAttrs = buildSolidAttributes(solidKinds);
+        const solids = instancedMesh(quadGeometry(), solidAttrs, [0, solidKinds.length], "solid", solidUniforms);
+        let solidSpots: null | { u: number; v: number; z: number }[] = null;
+        const solidsGroup = new THREE.Group();
+        solidsGroup.add(solids);
 
         const scene = new THREE.Scene();
         scene.add(pivot);
@@ -998,6 +1076,8 @@ export function ParticleEmblem({
         const startedAt = performance.now();
         // 마우스가 형태의 중심에서 얼마나 떨어져 있는지 (-1~1), 그리고 마지막으로 움직인 때
         const pointer = { x: 0, y: 0, movedAt: -Infinity };
+        // 화면 전체에서의 포인터 자리 (-1~1, 위가 +)와, 그것을 느리게 따라가는 값
+        const cursor = { x: 0, y: 0, easedX: 0, easedY: 0 };
         const look = { x: 0, y: 0, weight: 0 };
         let center = { x: 0.5, y: 0.5 };
 
@@ -1026,7 +1106,7 @@ export function ParticleEmblem({
           uniforms.uSizeBoost.value = narrow ? 1.7 : 1;
           uniforms.uScale.value = scale;
           // 입체 도형: 화면 위 자리를 그 깊이의 월드 좌표로 옮깁니다.
-          solidSize.value = scale * (narrow ? 1.5 : 1);
+          solidUniforms.uSizeBoost.value = scale * (narrow ? 1.5 : 1);
           const headRadius = (place.size * (narrow ? width : height)) / 2;
           const head = {
             u: place.cx,
@@ -1038,15 +1118,14 @@ export function ParticleEmblem({
             edgeV: headRadius / height,
           };
           const tan = Math.tan((FOV * Math.PI) / 360);
-          solidSets.forEach((set) => {
-            if (!set.spots) set.spots = set.kinds.map((kind) => pickSpot(kind, head, narrow));
-            set.spots.forEach(({ u, v, z }, k) => {
-              const half = (CAMERA_Z - z) * tan;
-              set.attrs.posA.set([(u - place.cx) * 2 * half * camera.aspect, -(v - place.cy) * 2 * half, z], k * 3);
-            });
-            set.mesh.geometry.getAttribute("aPosA").needsUpdate = true;
-            set.mesh.geometry.getAttribute("aPosB").needsUpdate = true;
+          if (!solidSpots) solidSpots = solidKinds.map((kind) => pickSpot(kind, head, narrow));
+          solidSpots.forEach(({ u, v, z }, k) => {
+            const half = (CAMERA_Z - z) * tan;
+            solidAttrs.posA.set([(u - place.cx) * 2 * half * camera.aspect, -(v - place.cy) * 2 * half, z], k * 3);
           });
+          solids.geometry.getAttribute("aPosA").needsUpdate = true;
+          solidUniforms.uPixel.value = (2 * tan) / height;
+          solidUniforms.uAspect.value = camera.aspect;
           uniforms.uNear.value = CAMERA_Z - 1.15 * scale;
           uniforms.uFar.value = CAMERA_Z + 1.5 * scale;
         };
@@ -1074,6 +1153,12 @@ export function ParticleEmblem({
           look.weight += (watching - look.weight) * 0.04;
           look.x += (pointer.x - look.x) * 0.08;
           look.y += (pointer.y - look.y) * 0.08;
+          // 떠다니는 도형은 포인터를 한 박자 늦게 따라가며 밀리고 비켜납니다.
+          cursor.easedX += (cursor.x - cursor.easedX) * 0.06;
+          cursor.easedY += (cursor.y - cursor.easedY) * 0.06;
+          solidUniforms.uPointer.value[0] = cursor.easedX;
+          solidUniforms.uPointer.value[1] = cursor.easedY;
+          solidUniforms.uPointerWeight.value = look.weight;
           const idleY = still ? -0.3 : Math.sin(t * 0.23) * 0.48 - 0.12;
           const idleX = still ? 0.05 : Math.sin(t * 0.17) * 0.07 + 0.04;
           pivot.rotation.y = idleY * (1 - look.weight) + look.x * 0.58 * look.weight;
@@ -1114,6 +1199,8 @@ export function ParticleEmblem({
           pointer.x = Math.max(-1, Math.min(1, x * 1.6));
           pointer.y = Math.max(-1, Math.min(1, y * 1.6));
           pointer.movedAt = performance.now();
+          cursor.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+          cursor.y = 1 - ((e.clientY - rect.top) / rect.height) * 2;
         };
         const onVisibility = () => (document.hidden ? stop() : start());
         const observer = new IntersectionObserver(([entry]) => {
