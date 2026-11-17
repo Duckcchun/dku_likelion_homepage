@@ -30,6 +30,22 @@ export function Navigation() {
     };
   }, [open]);
 
+  // 메뉴가 열려 있을 때: Esc로 닫고, 화면이 넓어지면(데스크톱 메뉴가 보이면) 닫습니다.
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+    const wide = window.matchMedia("(min-width: 768px)");
+    const onWide = () => wide.matches && setOpen(false);
+    window.addEventListener("keydown", onKey);
+    wide.addEventListener("change", onWide);
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      wide.removeEventListener("change", onWide);
+    };
+  }, [open]);
+
   const cta = recruit.isOpen ? "지원하기" : "모집 안내";
 
   // 모집 기간이 아닐 때 버튼을 누르면 안내를 잠깐 띄웁니다. (함께하기 섹션으로는 그대로 이동)
@@ -85,6 +101,7 @@ export function Navigation() {
           onClick={() => setOpen((v) => !v)}
           aria-label={open ? "메뉴 닫기" : "메뉴 열기"}
           aria-expanded={open}
+          aria-controls="mobile-menu"
         >
           {open ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
         </button>
@@ -93,7 +110,8 @@ export function Navigation() {
       <AnimatePresence>
         {open && (
           <motion.div
-            className="h-[calc(100svh-4rem)] border-t border-white/[0.06] bg-[#0B0B0B] md:hidden"
+            id="mobile-menu"
+            className="h-[calc(100svh-4rem)] overflow-y-auto border-t border-white/[0.06] bg-[#0B0B0B] md:hidden"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}

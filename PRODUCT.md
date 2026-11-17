@@ -42,7 +42,7 @@ web
 
 ## Capabilities and Constraints
 
-- 스택: Vite + React 18 + TypeScript, Tailwind CSS v4, Motion, GSAP, lucide-react. Vercel 배포.
+- 스택: Vite + React 18 + TypeScript, Tailwind CSS v4, Motion, three.js, lucide-react. Vercel 배포.
 - 언어: 한국어 단일.
 - 프로젝트 링크는 선택 항목이며, 없으면 버튼이 숨겨진다(현재 9개 중 일부만 링크 보유).
 - 운영진 프로필의 이메일·GitHub·LinkedIn도 선택 항목이다.
