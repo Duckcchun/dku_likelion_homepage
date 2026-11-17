@@ -9,6 +9,16 @@ import tomo from "../assets/products/tomo.webp";
 import banana from "../assets/products/banana.webp";
 import conviSeat from "../assets/products/convi-seat.webp";
 import conviSeat2 from "../assets/products/convi-seat-2.webp";
+import conviSeatThumb from "../assets/products/thumbs/convi-seat.webp";
+import catchcutThumb from "../assets/products/thumbs/catchcut.webp";
+import firstlineThumb from "../assets/products/thumbs/firstline.webp";
+import ieumThumb from "../assets/products/thumbs/ieum.webp";
+import orbitThumb from "../assets/products/thumbs/orbit.webp";
+import memorealThumb from "../assets/products/thumbs/memoreal.webp";
+import tomoThumb from "../assets/products/thumbs/tomo.webp";
+import mowaThumb from "../assets/products/thumbs/mowa.webp";
+import bananaThumb from "../assets/products/thumbs/banana.webp";
+import mcmomentsThumb from "../assets/products/thumbs/mcmoments.webp";
 
 export interface Product {
   id: string;
@@ -20,6 +30,8 @@ export interface Product {
   /** 분야 태그 */
   category: string;
   image: string;
+  /** 히어로의 작은 카드용 축소본 (너비 480px). 없으면 image를 씁니다. */
+  thumb?: string;
   /** 이미지 크롭 기준점 (CSS object-position) */
   imagePosition?: string;
   /** 링크가 없으면 비워 두세요. 버튼이 자동으로 숨겨집니다. */
@@ -75,6 +87,7 @@ export const productGroups: ProductGroup[] = [
         category: "Campus Life · Map",
         accentColor: "#F2913D",
         image: conviSeat,
+        thumb: conviSeatThumb,
         imagePosition: "center 40%",
         images: [conviSeat2],
         link: "https://convi-seat-finder.vercel.app/",
@@ -102,6 +115,7 @@ export const productGroups: ProductGroup[] = [
           "어려운 조항은 쉬운 말과 4컷 만화로 풀이",
         ],
         image: catchcut,
+        thumb: catchcutThumb,
         imagePosition: "center",
         link: "https://chae-ring.github.io/catchcut-prototype/",
       },
@@ -119,6 +133,7 @@ export const productGroups: ProductGroup[] = [
           "담당자 피드백과 결과물이 포트폴리오로 축적",
         ],
         image: firstline,
+        thumb: firstlineThumb,
         imagePosition: "top",
         link: "https://ai-linkedin-inky.vercel.app/",
       },
@@ -136,6 +151,7 @@ export const productGroups: ProductGroup[] = [
           "쌓인 기록을 이력서로 정리",
         ],
         image: ieum,
+        thumb: ieumThumb,
         imagePosition: "top",
         link: "https://amused-spray-27748457.figma.site/",
       },
@@ -153,6 +169,7 @@ export const productGroups: ProductGroup[] = [
           "절제에 성공한 시간을 나만의 별자리로 기록",
         ],
         image: orbit,
+        thumb: orbitThumb,
         imagePosition: "top",
       },
       {
@@ -169,6 +186,7 @@ export const productGroups: ProductGroup[] = [
           "회상치료에서 착안한 대화 방식",
         ],
         image: memoreal,
+        thumb: memorealThumb,
         imagePosition: "top",
       },
     ],
@@ -194,6 +212,7 @@ export const productGroups: ProductGroup[] = [
           "다듬은 문장을 Gmail 본문에 바로 적용",
         ],
         image: tomo,
+        thumb: tomoThumb,
         imagePosition: "center 30%",
       },
       {
@@ -210,6 +229,7 @@ export const productGroups: ProductGroup[] = [
           "AI가 그날의 산책 일기로 정리",
         ],
         image: mowa,
+        thumb: mowaThumb,
         imagePosition: "center",
       },
       {
@@ -226,6 +246,7 @@ export const productGroups: ProductGroup[] = [
           "약속 날 날씨에 맞는 카페·식당·놀거리 추천",
         ],
         image: banana,
+        thumb: bananaThumb,
         imagePosition: "center 32%",
       },
       {
@@ -242,6 +263,7 @@ export const productGroups: ProductGroup[] = [
           "My Collection에 소장하고 어울리는 다음 제품 제안",
         ],
         image: mcmoments,
+        thumb: mcmomentsThumb,
         imagePosition: "center 52%",
       },
     ],

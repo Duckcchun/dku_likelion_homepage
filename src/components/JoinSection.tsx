@@ -9,7 +9,11 @@ const EMAILJS_SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID;
 const EMAILJS_TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
 const EMAILJS_TO_EMAIL = import.meta.env.VITE_EMAILJS_TO_EMAIL || contact.email;
 
-/** 동아리 메일로 보내기. 환경변수가 없으면(로컬·미리보기) 보내는 척만 합니다. */
+/**
+ * 동아리 메일로 보내기.
+ * 환경변수가 없으면 로컬 개발에서만 보내는 척하고, 배포된 사이트에서는 실패로 알립니다.
+ * (설정이 빠진 채 배포됐을 때 "접수되었습니다"만 뜨고 메일은 사라지는 일을 막기 위해서)
+ */
 async function sendToClub(params: { from_name: string; from_email: string; message: string }) {
   if (EMAILJS_PUBLIC_KEY && EMAILJS_SERVICE_ID && EMAILJS_TEMPLATE_ID) {
     // 실제로 보낼 때만 EmailJS를 불러옵니다. (첫 화면 로딩을 가볍게)
@@ -20,10 +24,17 @@ async function sendToClub(params: { from_name: string; from_email: string; messa
       { to_email: EMAILJS_TO_EMAIL, reply_to: params.from_email, ...params },
       { publicKey: EMAILJS_PUBLIC_KEY },
     );
-  } else {
+  } else if (import.meta.env.DEV) {
     await new Promise((r) => setTimeout(r, 1200));
+  } else {
+    throw new Error("EmailJS 환경변수(VITE_EMAILJS_*)가 설정되지 않았습니다.");
   }
 }
+
+/** 봇이 숨은 칸을 채웠는지 */
+const isBot = (e: FormEvent) => Boolean(new FormData(e.currentTarget as HTMLFormElement).get("website"));
+
+const FAILED = `전송에 실패했습니다. 잠시 후 다시 시도하거나 ${contact.email}로 메일을 보내 주세요.`;
 
 const isEmail = (v: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim());
 
@@ -46,7 +57,7 @@ function InquiryForm() {
     setSubmitting(true);
     setStatus("idle");
     try {
-      await sendToClub({ from_name: form.name, from_email: form.email, message: form.message });
+      if (!isBot(e)) await sendToClub({ from_name: form.name, from_email: form.email, message: form.message });
       setStatus("success");
       setStatusMessage("문의가 접수되었습니다. 곧 연락드릴게요.");
       setForm({ name: "", email: "", message: "" });
@@ -54,7 +65,7 @@ function InquiryForm() {
     } catch (err) {
       console.error("이메일 전송 오류:", err);
       setStatus("error");
-      setStatusMessage("전송에 실패했습니다. 잠시 후 다시 시도해 주세요.");
+      setStatusMessage(FAILED);
     } finally {
       setSubmitting(false);
     }
@@ -62,6 +73,8 @@ function InquiryForm() {
 
   return (
     <form onSubmit={onSubmit} className="space-y-4" noValidate>
+      {/* 사람 눈에는 보이지 않는 칸. 자동 입력 봇만 채우므로, 채워져 있으면 보내지 않습니다. */}
+      <input type="text" name="website" tabIndex={-1} autoComplete="off" aria-hidden className="hidden" />
       <div className="grid gap-4 sm:grid-cols-2">
         <label className="block">
           <span className="mb-2 block text-sm text-white/60">이름</span>
@@ -137,6 +150,7 @@ function RecruitAlertForm() {
     setSubmitting(true);
     setStatus("idle");
     try {
+      if (isBot(e)) throw new Error("bot");
       await sendToClub({
         from_name: `${next}기 모집 알림 신청`,
         from_email: email.trim(),
@@ -148,7 +162,7 @@ function RecruitAlertForm() {
     } catch (err) {
       console.error("알림 신청 오류:", err);
       setStatus("error");
-      setStatusMessage("신청에 실패했습니다. 잠시 후 다시 시도해 주세요.");
+      setStatusMessage(FAILED);
     } finally {
       setSubmitting(false);
     }
@@ -156,6 +170,8 @@ function RecruitAlertForm() {
 
   return (
     <form onSubmit={onSubmit} className="mt-6" noValidate>
+      {/* 사람 눈에는 보이지 않는 칸. 자동 입력 봇만 채우므로, 채워져 있으면 보내지 않습니다. */}
+      <input type="text" name="website" tabIndex={-1} autoComplete="off" aria-hidden className="hidden" />
       <label htmlFor="recruit-alert-email" className="block text-sm font-semibold text-white">
         {next}기 모집 알림 받기
       </label>

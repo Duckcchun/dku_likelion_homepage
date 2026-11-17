@@ -43,6 +43,7 @@ npm run build   # build/ 폴더에 결과물
 | --- | --- |
 | `name`, `tagline`, `description`, `category` | 카드에 나오는 기본 정보 |
 | `image` | 대표 화면. `src/assets/products/`에 WebP로 넣고 위에서 import |
+| `thumb` | 히어로의 작은 카드용 축소본(너비 480px). `src/assets/products/thumbs/`에 넣고 import. 없으면 `image`를 씀 |
 | `link` | 서비스 주소. 없으면 버튼이 숨겨집니다. |
 | `problem` | 상세 화면의 "어떤 문제를 푸나요". 비우면 `description`이 나옵니다. |
 | `features` | 상세 화면의 핵심 기능 (3개 권장) |

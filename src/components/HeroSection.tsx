@@ -65,7 +65,7 @@ function RowCard({
     >
       <div className="aspect-[16/10] overflow-hidden rounded-md bg-[#161616] ring-1 ring-white/10 md:rounded-lg">
         <img
-          src={product.image}
+          src={product.thumb ?? product.image}
           alt={`${product.name} 화면`}
           className="h-full w-full object-cover"
           style={{ objectPosition: product.imagePosition ?? "center" }}

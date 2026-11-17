@@ -121,7 +121,6 @@ export const milestones: Milestone[] = [
 export interface Member {
   name: string;
   role: string;
-  message: string;
   image: string;
   email?: string;
   github?: string;
@@ -132,7 +131,6 @@ export const members: Member[] = [
   {
     name: "손동민",
     role: `${generation}기 대표`,
-    message: "함께 성장하는 대표가 되겠습니다!",
     image: member1,
     email: "qasw1733@gmail.com",
     github: "https://github.com/Duckcchun",
@@ -141,7 +139,6 @@ export const members: Member[] = [
   {
     name: "여채린",
     role: `${generation}기 부대표`,
-    message: "함께 배우고 성장하는 멋사를 만들어가겠습니다.",
     image: member2,
     email: "ycl0514@dankook.ac.kr",
     github: "https://github.com/chae-ring",
@@ -149,7 +146,6 @@ export const members: Member[] = [
   {
     name: "양준호",
     role: "백엔드",
-    message: "올해도 버텨보겠습니다. 같이 성장해요!",
     image: member3,
     email: "did1406dud@dankook.ac.kr",
     github: "https://github.com/Novice-Dev-Robin",
@@ -157,7 +153,6 @@ export const members: Member[] = [
   {
     name: "김민수",
     role: "백엔드",
-    message: "함께 성장해나가며 모두에게 얻어갈 수 있는 한 해가 되어봅시다!",
     image: member4,
     email: "ms32220624@dankook.ac.kr",
     github: "https://github.com/Minwater-03",
@@ -165,14 +160,12 @@ export const members: Member[] = [
   {
     name: "김선민",
     role: "프론트엔드",
-    message: "꾸준한 노력으로 성장하는 개발자입니다.",
     image: member5,
     email: "kimsunmin0616@dankook.ac.kr",
   },
   {
     name: "이효빈",
     role: "프론트엔드",
-    message: "오늘도 심어보는 사과나무 한 그루, 잘 부탁드립니다~",
     image: member6,
     email: "hbeen22@dankook.ac.kr",
     github: "https://github.com/hyoddi",
@@ -180,13 +173,11 @@ export const members: Member[] = [
   {
     name: "이동근",
     role: "기획",
-    message: "함께 소통하고 완성도 높은 서비스를 만들겠습니다!",
     image: member7,
   },
   {
     name: "김지호",
     role: "디자인",
-    message: "더 나은 사용자 경험을 위해 디테일을 놓치지 않겠습니다!",
     image: member8,
   },
 ];

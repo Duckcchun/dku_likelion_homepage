@@ -42,7 +42,7 @@ web
 
 ## Capabilities and Constraints
 
-- 스택: Vite + React 18 + TypeScript, Tailwind CSS v4, Motion, GSAP, lucide-react. Vercel 배포.
+- 스택: Vite + React 18 + TypeScript, Tailwind CSS v4, Motion, three.js, lucide-react. Vercel 배포.
 - 언어: 한국어 단일.
 - 프로젝트 링크는 선택 항목이며, 없으면 버튼이 숨겨진다(현재 9개 중 일부만 링크 보유).
 - 운영진 프로필의 이메일·GitHub·LinkedIn도 선택 항목이다.
@@ -62,7 +62,7 @@ web
 - 2026 아이디어톤 5개: CATCHCUT, 첫, 줄, 이음, Orbit, Memoreal.
 - 2026 중앙 해커톤 4개: TOMO, MOWA, 반나나, MCMoments.
 - 각 프로젝트의 화면 이미지: `src/assets/products/*.webp`. 한 줄 소개와 설명은 `src/data/products.ts`.
-- 운영진 8명의 사진·역할·한마디: `src/assets/member-*.png`, `src/data/site.ts`.
+- 운영진 8명의 사진·역할: `src/assets/member-*.png`, `src/data/site.ts`.
 - 트랙 4개의 커리큘럼과 도구 목록, 14기 모집 일정.
 - 로고: `src/assets/logo-likelion-univ.png`, `logo-dku-startup.png`, `dankook-logo.png`.
 - **없는 것(지어내지 말 것)**: 수상 내역, 지원 경쟁률, 수료생 수, 취업·창업 성과, 멤버 후기, 후원사, 활동 현장 사진.
